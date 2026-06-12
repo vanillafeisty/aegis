@@ -58,9 +58,36 @@ jobs:
           cd ../frontend
           npm run lint 2>/dev/null || true
 
+  build:
+    name: Build Docker Images
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Backend (no push)
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: false
+          load: true
+          tags: aegis-backend:test
+
+      - name: Build Frontend (no push)
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: false
+          load: true
+          tags: aegis-frontend:test
+
   build-and-push:
     name: Build and Push Docker Images
-    needs: test
+    needs: build
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
@@ -180,5 +207,5 @@ jobs:
           script: |
             cd /home/ubuntu/aegis
             git pull origin main
-            docker-compose pull
-            docker-compose up -d
+            docker-compose -f docker-compose.prod.yml pull
+            docker-compose -f docker-compose.prod.yml up -d
