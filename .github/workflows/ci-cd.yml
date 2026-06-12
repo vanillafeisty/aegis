@@ -43,12 +43,12 @@ jobs:
       - name: Run backend tests
         run: |
           cd backend
-          pytest tests/ -v --cov=app --cov-report=xml || true
+          if [ -d "tests" ]; then pytest tests/ -v --cov=app --cov-report=xml; else echo "No tests directory, skipping"; fi
 
       - name: Run frontend tests
         run: |
           cd frontend
-          npm test || true
+          if [ -f "package.json" ] && grep -q '"test"' package.json; then npm test; else echo "No test script, skipping"; fi
 
       - name: Run linting
         run: |
@@ -56,7 +56,7 @@ jobs:
           ruff check . || true
           black --check . || true
           cd ../frontend
-          npm run lint || true
+          npm run lint 2>/dev/null || true
 
   build-and-push:
     name: Build and Push Docker Images
