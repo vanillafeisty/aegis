@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Install Playwright + Chromium
 RUN playwright install chromium
-RUN playwright install-deps chromium
+# RUN playwright install-deps chromium  # Skip - deps installed via apt above
 
 COPY . .
 

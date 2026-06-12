@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
+from app.api.deps import get_current_user_id
 from app.db.session import get_db
 from app.models.task import Task
 from app.schemas import AgentCommand, TaskResponse, TaskApproval
@@ -18,7 +19,11 @@ gemini = GeminiService()
 
 
 @router.post("/command", status_code=202)
-async def send_command(command: AgentCommand, user_id: UUID, db: AsyncSession = Depends(get_db)):
+async def send_command(
+    command: AgentCommand,
+    user_id: UUID = Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db),
+):
     """Submit a high-level command to the agent."""
     try:
         # Step 1: Classify intent
@@ -58,7 +63,7 @@ async def send_command(command: AgentCommand, user_id: UUID, db: AsyncSession = 
 
 @router.get("/tasks", response_model=list[TaskResponse])
 async def get_tasks(
-    user_id: UUID,
+    user_id: UUID = Depends(get_current_user_id),
     status: str = None,
     skip: int = 0,
     limit: int = 20,
@@ -76,7 +81,11 @@ async def get_tasks(
 
 
 @router.get("/tasks/{task_id}", response_model=TaskResponse)
-async def get_task(task_id: UUID, user_id: UUID, db: AsyncSession = Depends(get_db)):
+async def get_task(
+    task_id: UUID,
+    user_id: UUID = Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db),
+):
     """Get task details."""
     stmt = select(Task).filter(Task.id == task_id, Task.user_id == user_id)
     result = await db.execute(stmt)
@@ -90,7 +99,10 @@ async def get_task(task_id: UUID, user_id: UUID, db: AsyncSession = Depends(get_
 
 @router.post("/tasks/{task_id}/approve")
 async def approve_task(
-    task_id: UUID, user_id: UUID, approval: TaskApproval, db: AsyncSession = Depends(get_db)
+    task_id: UUID,
+    user_id: UUID = Depends(get_current_user_id),
+    approval: TaskApproval = None,
+    db: AsyncSession = Depends(get_db),
 ):
     """Approve or reject a pending task."""
     stmt = select(Task).filter(Task.id == task_id, Task.user_id == user_id)
@@ -111,7 +123,11 @@ async def approve_task(
 
 
 @router.delete("/tasks/{task_id}")
-async def cancel_task(task_id: UUID, user_id: UUID, db: AsyncSession = Depends(get_db)):
+async def cancel_task(
+    task_id: UUID,
+    user_id: UUID = Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db),
+):
     """Cancel a pending task."""
     stmt = select(Task).filter(Task.id == task_id, Task.user_id == user_id)
     result = await db.execute(stmt)

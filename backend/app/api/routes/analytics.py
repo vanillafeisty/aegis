@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import func
 
+from app.api.deps import get_current_user_id
 from app.db.session import get_db
 from app.models.application import Application
 from app.models.post import Post
@@ -19,7 +20,7 @@ logger = logging.getLogger("aegis")
 
 @router.get("/summary")
 async def get_analytics_summary(
-    user_id: UUID,
+    user_id: UUID = Depends(get_current_user_id),
     period: str = "30d",
     db: AsyncSession = Depends(get_db),
 ) -> AnalyticsSummary:
@@ -76,7 +77,7 @@ async def get_analytics_summary(
 
 @router.get("/dashboard")
 async def get_dashboard_metrics(
-    user_id: UUID,
+    user_id: UUID = Depends(get_current_user_id),
     db: AsyncSession = Depends(get_db),
 ):
     """Get real-time dashboard metrics."""

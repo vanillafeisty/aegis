@@ -1,7 +1,7 @@
 """Authentication routes."""
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
@@ -60,14 +60,19 @@ async def refresh_token(refresh_token: str):
 
 @router.get("/me", response_model=UserResponse)
 async def get_current_user(
-    token: str = None, db: AsyncSession = Depends(get_db)
+    authorization: str | None = Header(default=None),
+    token: str | None = None,
+    db: AsyncSession = Depends(get_db),
 ):
     """Get current user info."""
-    # Token extraction from header would be done by middleware in real app
-    if not token:
+    bearer_token = token
+    if authorization and authorization.lower().startswith("bearer "):
+        bearer_token = authorization.split(" ", 1)[1].strip()
+
+    if not bearer_token:
         raise HTTPException(status_code=401, detail="Not authenticated")
 
-    payload = AuthService.verify_token(token)
+    payload = AuthService.verify_token(bearer_token)
     if not payload:
         raise HTTPException(status_code=401, detail="Invalid token")
 

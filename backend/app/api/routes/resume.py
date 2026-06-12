@@ -5,6 +5,8 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import get_current_user_id
+from app.db.session import get_db
 from app.services.gemini_service import GeminiService
 
 router = APIRouter()
@@ -16,8 +18,8 @@ gemini = GeminiService()
 @router.post("/upload")
 async def upload_resume(
     file: UploadFile = File(...),
-    user_id: UUID = None,
-    db: AsyncSession = Depends(None),
+    user_id: UUID = Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db),
 ):
     """Upload and parse resume (Level 1 - No approval)."""
     try:
@@ -46,7 +48,7 @@ async def upload_resume(
 async def analyze_resume(
     resume_id: str,
     jd_text: str = None,
-    user_id: UUID = None,
+    user_id: UUID = Depends(get_current_user_id),
 ):
     """Analyze resume and generate insights (Level 1 - No approval)."""
     try:
@@ -72,7 +74,7 @@ async def analyze_resume(
 async def skill_gap_analysis(
     resume_id: str,
     jd_text: str,
-    user_id: UUID = None,
+    user_id: UUID = Depends(get_current_user_id),
 ):
     """Analyze skill gaps between resume and job (Level 1)."""
     try:

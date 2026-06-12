@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
+from app.api.deps import get_current_user_id
 from app.db.session import get_db
 from app.models.post import Post
 from app.schemas import ContentGenerationRequest, ContentResponse
@@ -20,7 +21,7 @@ gemini = GeminiService()
 @router.post("/generate", response_model=ContentResponse)
 async def generate_content(
     request: ContentGenerationRequest,
-    user_id: UUID,
+    user_id: UUID = Depends(get_current_user_id),
     db: AsyncSession = Depends(get_db),
 ):
     """Generate LinkedIn post content (Level 1 - No approval)."""
@@ -56,7 +57,7 @@ async def generate_content(
 @router.post("/publish/{post_id}", status_code=202)
 async def publish_post(
     post_id: UUID,
-    user_id: UUID,
+    user_id: UUID = Depends(get_current_user_id),
     db: AsyncSession = Depends(get_db),
 ):
     """Publish post (Level 3 - Mandatory approval)."""
@@ -84,7 +85,7 @@ async def publish_post(
 
 @router.get("/drafts")
 async def get_drafts(
-    user_id: UUID,
+    user_id: UUID = Depends(get_current_user_id),
     skip: int = 0,
     limit: int = 20,
     db: AsyncSession = Depends(get_db),

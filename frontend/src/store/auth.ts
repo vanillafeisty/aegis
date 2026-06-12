@@ -40,6 +40,17 @@ export const useAuthStore = create<AuthStore>()(
             accessToken: data.access_token,
             refreshToken: data.refresh_token,
           })
+
+          const meResponse = await fetch('/api/auth/me', {
+            headers: {
+              Authorization: `Bearer ${data.access_token}`,
+            },
+          })
+
+          if (!meResponse.ok) throw new Error('Failed to load user profile')
+
+          const user = await meResponse.json()
+          set({ user })
         } catch (error) {
           console.error('Login error:', error)
           throw error
@@ -60,6 +71,17 @@ export const useAuthStore = create<AuthStore>()(
             accessToken: data.access_token,
             refreshToken: data.refresh_token,
           })
+
+          const meResponse = await fetch('/api/auth/me', {
+            headers: {
+              Authorization: `Bearer ${data.access_token}`,
+            },
+          })
+
+          if (!meResponse.ok) throw new Error('Failed to load user profile')
+
+          const user = await meResponse.json()
+          set({ user })
         } catch (error) {
           console.error('Registration error:', error)
           throw error

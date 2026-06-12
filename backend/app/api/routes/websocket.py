@@ -2,7 +2,7 @@
 import json
 import logging
 
-from fastapi import APIRouter, WebSocketException, websocket
+from fastapi import APIRouter, WebSocketException, WebSocket
 
 router = APIRouter()
 logger = logging.getLogger("aegis")
@@ -12,7 +12,7 @@ connections: dict = {}
 
 
 @router.websocket("/ws/{user_id}")
-async def websocket_endpoint(websocket: websocket.WebSocket, user_id: str):
+async def websocket_endpoint(websocket: WebSocket, user_id: str):
     """WebSocket endpoint for real-time updates."""
     try:
         await websocket.accept()

@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
+from app.api.deps import get_current_user_id
 from app.db.session import get_db
 from app.models.application import Application
 from app.schemas import JobSearchRequest, ApplicationCreate, ApplicationResponse, ApplicationUpdate
@@ -17,7 +18,7 @@ logger = logging.getLogger("aegis")
 @router.post("/search")
 async def search_jobs(
     request: JobSearchRequest,
-    user_id: UUID,
+    user_id: UUID = Depends(get_current_user_id),
     db: AsyncSession = Depends(get_db),
 ):
     """Search LinkedIn jobs (Level 1 - No approval required)."""
@@ -45,7 +46,7 @@ async def search_jobs(
 @router.post("/apply", status_code=202)
 async def apply_job(
     request: ApplicationCreate,
-    user_id: UUID,
+    user_id: UUID = Depends(get_current_user_id),
     db: AsyncSession = Depends(get_db),
 ):
     """Apply to a job (Level 3 - Mandatory approval)."""
@@ -73,7 +74,7 @@ async def apply_job(
 
 @router.get("/applications")
 async def get_applications(
-    user_id: UUID,
+    user_id: UUID = Depends(get_current_user_id),
     status: str = None,
     skip: int = 0,
     limit: int = 20,
@@ -93,7 +94,7 @@ async def get_applications(
 @router.get("/applications/{app_id}", response_model=ApplicationResponse)
 async def get_application(
     app_id: UUID,
-    user_id: UUID,
+    user_id: UUID = Depends(get_current_user_id),
     db: AsyncSession = Depends(get_db),
 ):
     """Get application details."""
@@ -110,8 +111,8 @@ async def get_application(
 @router.patch("/applications/{app_id}")
 async def update_application(
     app_id: UUID,
-    user_id: UUID,
     update: ApplicationUpdate,
+    user_id: UUID = Depends(get_current_user_id),
     db: AsyncSession = Depends(get_db),
 ):
     """Update application status/notes."""
