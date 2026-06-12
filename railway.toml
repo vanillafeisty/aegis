@@ -1,0 +1,65 @@
+[build]
+builder = "dockerfile"
+
+[deploy]
+healthcheckPath = "/health"
+healthcheckTimeout = 100
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 10
+
+[services.api]
+name = "aegis-backend"
+dockerfile = "backend/Dockerfile"
+dockerContext = "backend"
+[services.api.variables]
+DATABASE_URL = "${{Postgres.DATABASE_URL}}"
+REDIS_URL = "${{Redis.REDIS_URL}}"
+CHROMA_HOST = "${{ChromaDB.CHROMA_HOST}}"
+CHROMA_PORT = "8000"
+GEMINI_API_KEY = "${{secrets.GEMINI_API_KEY}}"
+SECRET_KEY = "${{secrets.SECRET_KEY}}"
+ENVIRONMENT = "production"
+SENDGRID_API_KEY = "${{secrets.SENDGRID_API_KEY}}"
+FROM_EMAIL = "sonalardhi@gmail.com"
+
+[services.worker]
+name = "aegis-celery-worker"
+dockerfile = "backend/Dockerfile"
+dockerContext = "backend"
+startCommand = "celery -A app.worker.celery_app worker --loglevel=info --concurrency=4"
+[services.worker.variables]
+DATABASE_URL = "${{Postgres.DATABASE_URL}}"
+REDIS_URL = "${{Redis.REDIS_URL}}"
+CHROMA_HOST = "${{ChromaDB.CHROMA_HOST}}"
+CHROMA_PORT = "8000"
+GEMINI_API_KEY = "${{secrets.GEMINI_API_KEY}}"
+SECRET_KEY = "${{secrets.SECRET_KEY}}"
+
+[services.beat]
+name = "aegis-celery-beat"
+dockerfile = "backend/Dockerfile"
+dockerContext = "backend"
+startCommand = "celery -A app.worker.celery_app beat --loglevel=info"
+[services.beat.variables]
+DATABASE_URL = "${{Postgres.DATABASE_URL}}"
+REDIS_URL = "${{Redis.REDIS_URL}}"
+GEMINI_API_KEY = "${{secrets.GEMINI_API_KEY}}"
+SECRET_KEY = "${{secrets.SECRET_KEY}}"
+
+[services.frontend]
+name = "aegis-frontend"
+dockerfile = "frontend/Dockerfile"
+dockerContext = "frontend"
+[services.frontend.variables]
+VITE_API_URL = "https://${{services.api.url}}"
+VITE_WS_URL = "wss://${{services.api.url}}"
+
+[databases.postgres]
+name = "aegis-db"
+
+[databases.redis]
+name = "aegis-redis"
+
+[databases.chromadb]
+name = "aegis-chromadb"
+image = "chromadb/chroma:latest"
