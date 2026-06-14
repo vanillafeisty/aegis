@@ -107,7 +107,7 @@ Once setup is complete, you can:
 ### Backend won't start
 ```bash
 pip install -r requirements.txt
-playwright install chromium
+playwright install chromium 
 python app.py
 ```
 
