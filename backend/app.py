@@ -6,9 +6,11 @@ import asyncio
 import os
 from dotenv import load_dotenv
 
-# Import all agents
-import agent_post
-import agent_connect
+# ❌ Comment out these (need Playwright/browser):
+# import agent_post
+# import agent_connect
+
+# ✅ Keep these (no Playwright needed):
 import agent_email
 import agent_profile_tweak
 import ai_agent_inbox
@@ -59,8 +61,6 @@ async def health_check():
     return {
         "status": "operational",
         "available_agents": [
-            "post_to_linkedin",
-            "send_connection_request",
             "send_email",
             "optimize_profile",
             "reply_to_inbox",
@@ -104,51 +104,36 @@ async def get_credentials_status():
         "all_configured": bool(linkedin_cookie and openai_key and smtp_email)
     }
 
-# ==================== LINKEDIN AGENTS ====================
+# ==================== LINKEDIN AGENTS (COMMENTED - NEEDS BROWSER) ====================
 
-@app.post("/agents/post")
-async def post_to_linkedin(request: PostRequest, background_tasks: BackgroundTasks):
-    """Post content to LinkedIn feed"""
-    try:
-        linkedin_cookie = os.getenv("LINKEDIN_SESSION_COOKIE")
-        if not linkedin_cookie:
-            raise HTTPException(
-                status_code=400,
-                detail="LinkedIn credentials not configured"
-            )
-        
-        # Run in background to not block the response
-        background_tasks.add_task(agent_post.run_feed_post_via_browser, request.content)
-        return {
-            "status": "queued",
-            "message": "Post is being published to your LinkedIn feed",
-            "content": request.content
-        }
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+# ❌ These need Playwright - only run locally!
+# @app.post("/agents/post")
+# async def post_to_linkedin(request: PostRequest, background_tasks: BackgroundTasks):
+#     """Post content to LinkedIn feed"""
+#     try:
+#         linkedin_cookie = os.getenv("LINKEDIN_SESSION_COOKIE")
+#         if not linkedin_cookie:
+#             raise HTTPException(status_code=400, detail="LinkedIn credentials not configured")
+#         background_tasks.add_task(agent_post.run_feed_post_via_browser, request.content)
+#         return {"status": "queued", "message": "Post is being published to your LinkedIn feed", "content": request.content}
+#     except Exception as e:
+#         raise HTTPException(status_code=400, detail=str(e))
 
-@app.post("/agents/connect")
-async def send_connection_request(request: ConnectionRequest, background_tasks: BackgroundTasks):
-    """Send a connection request to a LinkedIn profile"""
-    try:
-        linkedin_cookie = os.getenv("LINKEDIN_SESSION_COOKIE")
-        if not linkedin_cookie:
-            raise HTTPException(
-                status_code=400,
-                detail="LinkedIn credentials not configured"
-            )
-        
-        if not request.profile_url.startswith("https://"):
-            raise HTTPException(status_code=400, detail="Invalid profile URL")
-        
-        background_tasks.add_task(agent_connect.send_connection_request, request.profile_url)
-        return {
-            "status": "queued",
-            "message": "Connection request is being sent",
-            "profile_url": request.profile_url
-        }
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+# @app.post("/agents/connect")
+# async def send_connection_request(request: ConnectionRequest, background_tasks: BackgroundTasks):
+#     """Send a connection request to a LinkedIn profile"""
+#     try:
+#         linkedin_cookie = os.getenv("LINKEDIN_SESSION_COOKIE")
+#         if not linkedin_cookie:
+#             raise HTTPException(status_code=400, detail="LinkedIn credentials not configured")
+#         if not request.profile_url.startswith("https://"):
+#             raise HTTPException(status_code=400, detail="Invalid profile URL")
+#         background_tasks.add_task(agent_connect.send_connection_request, request.profile_url)
+#         return {"status": "queued", "message": "Connection request is being sent", "profile_url": request.profile_url}
+#     except Exception as e:
+#         raise HTTPException(status_code=400, detail=str(e))
+
+# ==================== AI AGENTS (NO BROWSER NEEDED) ====================
 
 @app.post("/agents/inbox")
 async def reply_to_inbox(background_tasks: BackgroundTasks):
@@ -158,16 +143,10 @@ async def reply_to_inbox(background_tasks: BackgroundTasks):
         openai_key = os.getenv("OPENAI_API_KEY")
         
         if not linkedin_cookie or not openai_key:
-            raise HTTPException(
-                status_code=400,
-                detail="LinkedIn or OpenAI credentials not configured"
-            )
+            raise HTTPException(status_code=400, detail="LinkedIn or OpenAI credentials not configured")
         
         background_tasks.add_task(ai_agent_inbox.run_ai_agent_inbox)
-        return {
-            "status": "queued",
-            "message": "Inbox processing started - AI will reply to unread messages"
-        }
+        return {"status": "queued", "message": "Inbox processing started - AI will reply to unread messages"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -179,16 +158,10 @@ async def optimize_profile(background_tasks: BackgroundTasks):
         openai_key = os.getenv("OPENAI_API_KEY")
         
         if not linkedin_cookie or not openai_key:
-            raise HTTPException(
-                status_code=400,
-                detail="LinkedIn or OpenAI credentials not configured"
-            )
+            raise HTTPException(status_code=400, detail="LinkedIn or OpenAI credentials not configured")
         
         background_tasks.add_task(agent_profile_tweak.optimize_my_profile)
-        return {
-            "status": "queued",
-            "message": "Profile optimization started - AI will enhance your headline and about section"
-        }
+        return {"status": "queued", "message": "Profile optimization started - AI will enhance your headline and about section"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -202,10 +175,7 @@ async def send_email(request: EmailRequest):
         smtp_password = os.getenv("SMTP_PASSWORD")
         
         if not smtp_email or not smtp_password:
-            raise HTTPException(
-                status_code=400,
-                detail="Gmail credentials not configured"
-            )
+            raise HTTPException(status_code=400, detail="Gmail credentials not configured")
         
         success = agent_email.verify_and_send_email(
             request.recipient_email,
@@ -214,11 +184,7 @@ async def send_email(request: EmailRequest):
         )
         
         if success:
-            return {
-                "status": "success",
-                "message": "Email sent successfully",
-                "recipient": request.recipient_email
-            }
+            return {"status": "success", "message": "Email sent successfully", "recipient": request.recipient_email}
         else:
             raise HTTPException(status_code=400, detail="Failed to send email")
     except Exception as e:
@@ -240,8 +206,6 @@ async def root():
                 "status": "GET /credentials/status"
             },
             "agents": {
-                "post": "POST /agents/post",
-                "connect": "POST /agents/connect",
                 "inbox": "POST /agents/inbox",
                 "profile": "POST /agents/profile",
                 "email": "POST /agents/email"
