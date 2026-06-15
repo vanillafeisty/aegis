@@ -21,7 +21,7 @@ def print_banner():
     print("      🛡️  AEGIS AI AGENT PLATFORM CENTRAL DASHBOARD  🛡️")
     print("=" * 60)
     print(" 1. [LINKEDIN] Publish an Automated Post to Feed")
-    print(" 2. [LINKEDIN] Check Inbox DMs & Auto-Reply with OpenAI")
+    print(" 2. [LINKEDIN] Check Inbox DMs & Auto-Reply with Groq")
     print(" 3. [LINKEDIN] Send a Dynamic Outbound Connection Request")
     print(" 4. [LINKEDIN] Audit and Enhance Profile Summary Text")
     print(" 5. [GMAIL]    Send a Verification Test Email via SMTP")

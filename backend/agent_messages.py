@@ -62,7 +62,7 @@ async def process_inbox_and_reply():
                         print(f"💬 Last Text Received: \"{latest_incoming_text.strip()}\"")
                         
                         # --- THIS IS WHERE YOUR LLM LOGIC PLUGS IN ---
-                        # Pass 'latest_incoming_text' to your OpenAI/LangChain model to generate custom response.
+                        # Pass 'latest_incoming_text' to your Groq/LangChain model to generate custom response.
                         # For now, we will drop in a quick contextual placeholder message block string.
                         ai_reply_draft = f"Hi {sender_name.split()[0]}, thanks for reaching out! This is an automated confirmation caught by my personal project assistant agent. Talk soon!"
                         # ---------------------------------------------

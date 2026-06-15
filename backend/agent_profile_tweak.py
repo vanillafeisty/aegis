@@ -3,18 +3,18 @@ import asyncio
 import random
 from bs4 import BeautifulSoup
 from playwright.async_api import async_playwright
-from openai import OpenAI
+from groq import Groq
 from dotenv import load_dotenv
 
 # Initialize hooks
 load_dotenv()
 COOKIE_VALUE = os.getenv("LINKEDIN_SESSION_COOKIE")
-OPENAI_KEY = os.getenv("OPENAI_API_KEY")
+GROQ_KEY = os.getenv("GROQ_API_KEY")
 
-ai_client = OpenAI(api_key=OPENAI_KEY)
+ai_client = Groq(api_key=GROQ_KEY)
 
 def generate_profile_tweaks(current_headline, current_about):
-    """Passes current profile elements to OpenAI to analyze and generate enhancements."""
+    """Passes current profile elements to Groq to analyze and generate enhancements."""
     print("🧠 AI is analyzing your current text for optimizations...")
     try:
         system_prompt = (
@@ -32,7 +32,7 @@ def generate_profile_tweaks(current_headline, current_about):
         )
         
         response = ai_client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="mixtral-8x7b-32768",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
@@ -52,7 +52,7 @@ def generate_profile_tweaks(current_headline, current_about):
         return None, None
 
 async def optimize_my_profile():
-    if not COOKIE_VALUE or not OPENAI_KEY:
+    if not COOKIE_VALUE or not GROQ_KEY:
         print("❌ Configuration Missing inside your .env file.")
         return
 

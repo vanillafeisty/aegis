@@ -33,9 +33,9 @@ async def health():
 async def get_credentials_status():
     return {
         "linkedin_connected": bool(os.getenv("LINKEDIN_SESSION_COOKIE")),
-        "openai_connected": bool(os.getenv("OPENAI_API_KEY")),
+        "groq_connected": bool(os.getenv("GROQ_API_KEY")),
         "gmail_connected": bool(os.getenv("SMTP_EMAIL")),
-        "all_configured": bool(os.getenv("LINKEDIN_SESSION_COOKIE") and os.getenv("OPENAI_API_KEY") and os.getenv("SMTP_EMAIL"))
+        "all_configured": bool(os.getenv("LINKEDIN_SESSION_COOKIE") and os.getenv("GROQ_API_KEY") and os.getenv("SMTP_EMAIL"))
     }
 
 if __name__ == "__main__":

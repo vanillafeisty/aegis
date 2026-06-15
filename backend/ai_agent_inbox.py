@@ -2,19 +2,19 @@ import os
 import asyncio
 import random
 from playwright.async_api import async_playwright
-from openai import OpenAI
+from groq import Groq
 from dotenv import load_dotenv
 
 # Initialize the environments and API hooks
 load_dotenv()
 COOKIE_VALUE = os.getenv("LINKEDIN_SESSION_COOKIE")
-OPENAI_KEY = os.getenv("OPENAI_API_KEY")
+GROQ_KEY = os.getenv("GROQ_API_KEY")
 
-# Create the OpenAI client pipeline
-ai_client = OpenAI(api_key=OPENAI_KEY)
+# Create the Groq client pipeline
+ai_client = Groq(api_key=GROQ_KEY)
 
 def generate_ai_reply(sender_name, inbound_message):
-    """Passes the incoming message string to OpenAI to construct a professional reply."""
+    """Passes the incoming message string to Groq to construct a professional reply."""
     try:
         system_prompt = (
             "You are a professional, helpful personal AI assistant agent managing my LinkedIn account. "
@@ -25,9 +25,9 @@ def generate_ai_reply(sender_name, inbound_message):
         
         user_prompt = f"Inbound message from {sender_name}: '{inbound_message}'\n\nGenerate the reply:"
         
-        # Calling the lightweight, fast, and cost-effective gpt-4o-mini engine model
+        # Calling the Groq mixtral-8x7b-32768 free model for fast inference
         response = ai_client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="mixtral-8x7b-32768",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
@@ -41,8 +41,8 @@ def generate_ai_reply(sender_name, inbound_message):
         return f"Hi {sender_name}, thanks for reaching out! I've received your note and will review it shortly."
 
 async def run_ai_agent_inbox():
-    if not COOKIE_VALUE or not OPENAI_KEY:
-        print("❌ Configuration Missing: Check that both LINKEDIN_SESSION_COOKIE and OPENAI_API_KEY are set inside your .env file.")
+    if not COOKIE_VALUE or not GROQ_KEY:
+        print("❌ Configuration Missing: Check that both LINKEDIN_SESSION_COOKIE and GROQ_API_KEY are set inside your .env file.")
         return
 
     async with async_playwright() as p:
@@ -88,7 +88,7 @@ async def run_ai_agent_inbox():
                         print(f"📥 Received Text: \"{incoming_cleaned}\"")
                         
                         # Trigger the live LLM completion engine thread call 
-                        print("🧠 Thinking... Querying OpenAI completion framework for draft...")
+                        print("🧠 Thinking... Querying Groq completion framework for draft...")
                         ai_response = generate_ai_reply(sender_name, incoming_cleaned)
                         print(f"🤖 Generated Response: \"{ai_response}\"")
                         
