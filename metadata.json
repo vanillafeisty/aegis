@@ -1,0 +1,6 @@
+{
+  "name": "Aegis",
+  "description": "Autonomous LinkedIn automation and outreach agent powered by AI",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
