@@ -1,118 +1,187 @@
+"""
+LinkedIn Inbox Agent — Monitors and auto-replies to messages.
+Uses the LinkedIn Voyager messaging API with the li_at session cookie.
+No Playwright or browser automation required.
+"""
+
 import os
-import asyncio
-import random
-from playwright.async_api import async_playwright
-from groq import Groq
-from dotenv import load_dotenv
+import logging
+from typing import Dict, Any
 
-# Initialize the environments and API hooks
-load_dotenv()
-COOKIE_VALUE = os.getenv("LINKEDIN_SESSION_COOKIE")
-GROQ_KEY = os.getenv("GROQ_API_KEY")
+logger = logging.getLogger(__name__)
 
-# Create the Groq client pipeline
-ai_client = Groq(api_key=GROQ_KEY)
+try:
+    from groq import Groq
+    GROQ_AVAILABLE = True
+except ImportError:
+    GROQ_AVAILABLE = False
+    logging.warning("Groq not available")
 
-def generate_ai_reply(sender_name, inbound_message):
-    """Passes the incoming message string to Groq to construct a professional reply."""
+from linkedin_http import (
+    get_authenticated_client,
+    COOKIE_EXPIRED_MESSAGE,
+)
+
+
+async def process_inbox() -> Dict[str, Any]:
+    """
+    Check LinkedIn inbox and process recent messages with AI-generated replies.
+    Reads the latest conversations, generates a reply via Groq, and sends it.
+    """
+    groq_key = os.getenv('GROQ_API_KEY')
+    model = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
+    session_cookie = os.getenv('LINKEDIN_SESSION_COOKIE')
+
+    if not session_cookie:
+        return {"status": "error", "message": "LinkedIn session cookie not set"}
+
+    if not GROQ_AVAILABLE or not groq_key:
+        return {"status": "error", "message": "Groq AI not available for auto-replies"}
+
+    logger.info("Processing LinkedIn inbox via Voyager API")
+    messages_processed = 0
+
     try:
-        system_prompt = (
-            "You are a professional, helpful personal AI assistant agent managing my LinkedIn account. "
-            "Draft a concise, warm, natural response (under 3 sentences) to incoming direct messages. "
-            "Be authentic and polite. Do not use corporate jargon or sound robotic. "
-            "Sign off with 'Best, [My Name Assistant]' or keep it open-ended to keep the conversation moving naturally."
-        )
-        
-        user_prompt = f"Inbound message from {sender_name}: '{inbound_message}'\n\nGenerate the reply:"
-        
-        # Calling the Groq mixtral-8x7b-32768 free model for fast inference
-        response = ai_client.chat.completions.create(
-            model="mixtral-8x7b-32768",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
-            max_tokens=150,
-            temperature=0.7
-        )
-        return response.choices[0].message.content.strip()
+        async with get_authenticated_client() as client:
+            # 1. Fetch recent conversations
+            conv_resp = await client.get(
+                "/messaging/conversations",
+                params={
+                    "keyVersion": "LEGACY_INBOX",
+                    "start": "0",
+                    "count": "5",
+                },
+            )
+
+            if conv_resp.status_code in (401, 403):
+                return {"status": "cookie_expired", "message": COOKIE_EXPIRED_MESSAGE}
+
+            if conv_resp.status_code != 200:
+                return {"status": "error", "message": f"Failed to fetch conversations ({conv_resp.status_code})"}
+
+            conv_data = conv_resp.json()
+            conversations = conv_data.get("elements", [])
+
+            if not conversations:
+                return {
+                    "status": "success",
+                    "message": "No conversations found in inbox",
+                    "messages_processed": 0,
+                }
+
+            groq_client = Groq(api_key=groq_key)
+
+            # Process first 3 conversations
+            for conv in conversations[:3]:
+                conv_urn = conv.get("entityUrn", "")
+                if not conv_urn:
+                    continue
+
+                # Extract the conversation ID
+                conv_id = conv_urn.split(":")[-1]
+
+                try:
+                    # 2. Fetch messages in this conversation
+                    msg_resp = await client.get(
+                        f"/messaging/conversations/{conv_id}/events",
+                        params={"count": "3"},
+                    )
+
+                    if msg_resp.status_code != 200:
+                        logger.warning(f"Failed to fetch messages for conversation {conv_id}")
+                        continue
+
+                    msg_data = msg_resp.json()
+                    events = msg_data.get("elements", [])
+
+                    if not events:
+                        continue
+
+                    # Get the latest message text
+                    latest = events[0]
+                    message_body = ""
+
+                    event_content = latest.get("eventContent", {})
+                    if isinstance(event_content, dict):
+                        msg_event = event_content.get("com.linkedin.voyager.messaging.event.MessageEvent", {})
+                        if msg_event:
+                            body = msg_event.get("body", "")
+                            if body:
+                                message_body = body
+
+                    # Also try a simpler path
+                    if not message_body:
+                        message_body = latest.get("body", "") or latest.get("subContent", "")
+
+                    if not message_body:
+                        continue
+
+                    # 3. Generate a reply with Groq
+                    response = groq_client.chat.completions.create(
+                        model=model,
+                        messages=[{
+                            "role": "user",
+                            "content": f"""Generate a professional, friendly reply to this LinkedIn message:
+
+"{message_body}"
+
+Keep it under 280 characters. Be helpful and professional."""
+                        }],
+                        max_tokens=100,
+                        temperature=0.7
+                    )
+
+                    reply = response.choices[0].message.content.strip()
+                    if reply.startswith('"') and reply.endswith('"'):
+                        reply = reply[1:-1]
+
+                    # 4. Send the reply
+                    reply_payload = {
+                        "eventCreate": {
+                            "value": {
+                                "com.linkedin.voyager.messaging.create.MessageCreate": {
+                                    "body": reply,
+                                    "attachments": [],
+                                    "attributedBody": {
+                                        "text": reply,
+                                        "attributes": [],
+                                    },
+                                }
+                            }
+                        },
+                        "dedupeByClientGeneratedToken": False,
+                    }
+
+                    send_resp = await client.post(
+                        f"/messaging/conversations/{conv_id}/events",
+                        json=reply_payload,
+                        headers={"Content-Type": "application/json"},
+                    )
+
+                    if send_resp.status_code in (200, 201):
+                        messages_processed += 1
+                        logger.info(f"Replied to conversation {conv_id}")
+                    else:
+                        logger.warning(f"Failed to send reply to {conv_id} ({send_resp.status_code})")
+
+                except Exception as e:
+                    logger.warning(f"Error processing conversation {conv_id}: {e}")
+                    continue
+
+        return {
+            "status": "success",
+            "message": "Inbox processing completed",
+            "messages_processed": messages_processed,
+            "details": f"Processed and replied to {messages_processed} messages",
+        }
+
+    except ValueError as ve:
+        return {"status": "cookie_expired", "message": str(ve)}
     except Exception as e:
-        print(f"❌ LLM completion engine failed: {e}")
-        return f"Hi {sender_name}, thanks for reaching out! I've received your note and will review it shortly."
+        logger.error(f"Inbox processing error: {e}")
+        return {"status": "error", "message": str(e)}
 
-async def run_ai_agent_inbox():
-    if not COOKIE_VALUE or not GROQ_KEY:
-        print("❌ Configuration Missing: Check that both LINKEDIN_SESSION_COOKIE and GROQ_API_KEY are set inside your .env file.")
-        return
 
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False) # Keep False to supervise what your AI types live!
-        context = await browser.new_context()
-        
-        await context.add_cookies([{
-            "name": "li_at",
-            "value": COOKIE_VALUE,
-            "domain": ".www.linkedin.com",
-            "path": "/"
-        }])
-        
-        page = await context.new_page()
-        print("🤖 AI Agent searching LinkedIn Inbox for unread messages...")
-        await page.goto("https://linkedin.com")
-        await page.wait_for_timeout(random.randint(4000, 6000))
-        
-        try:
-            conversation_cards = page.locator("li.msg-conversations-container__convo-item")
-            count = await conversation_cards.count()
-            
-            for i in range(min(count, 3)): # Limit to top 3 conversations per sweep loop run cycle to remain completely safe
-                card = conversation_cards.nth(i)
-                unread_badge = card.locator(".msg-conversations-container__unread-count")
-                
-                if await unread_badge.is_visible():
-                    sender_raw = await card.locator(".msg-conversations-container__participant-name").inner_text()
-                    sender_name = sender_raw.strip()
-                    print(f"\n📬 Processing unread thread from: {sender_name}")
-                    
-                    # Open the chat context panel window
-                    await card.click()
-                    await page.wait_for_timeout(random.randint(2000, 3000))
-                    
-                    # Isolate chat thread history content strings
-                    msg_bubbles = page.locator(".msg-s-message-list-container .msg-s-event-listitem__body")
-                    bubble_count = await msg_bubbles.count()
-                    
-                    if bubble_count > 0:
-                        latest_incoming_text = await msg_bubbles.nth(bubble_count - 1).inner_text()
-                        incoming_cleaned = latest_incoming_text.strip()
-                        print(f"📥 Received Text: \"{incoming_cleaned}\"")
-                        
-                        # Trigger the live LLM completion engine thread call 
-                        print("🧠 Thinking... Querying Groq completion framework for draft...")
-                        ai_response = generate_ai_reply(sender_name, incoming_cleaned)
-                        print(f"🤖 Generated Response: \"{ai_response}\"")
-                        
-                        # Locate input target field element, simulate typing rhythm, and ship the data payload
-                        reply_box = page.locator("div[role='textbox'][contenteditable='true']").first
-                        if await reply_box.is_visible():
-                            await reply_box.click()
-                            await reply_box.fill(ai_response)
-                            await page.wait_for_timeout(random.randint(2000, 4000)) # Mimic human review spacing
-                            
-                            send_button = page.get_by_role("button", name="Send").first
-                            await send_button.click()
-                            print(f"🚀 Reply sent cleanly to {sender_name}!")
-                            await page.wait_for_timeout(2000)
-                else:
-                    print(f"⏭️ Thread {i+1} already marked read. Skipping...")
-                    
-            print("\n🤖 Run cycle processing run complete. Agent context closing successfully.")
-            
-        except Exception as e:
-            print(f"⚠️ Operation workflow exception context caught: {e}")
-            
-        await page.wait_for_timeout(3000)
-        await browser.close()
-
-if __name__ == "__main__":
-    asyncio.run(run_ai_agent_inbox())
+async def run() -> Dict[str, Any]:
+    """Run the inbox agent."""
+    return await process_inbox()

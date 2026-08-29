@@ -1,154 +1,102 @@
+"""
+LinkedIn Profile Optimization Agent - Uses Groq LLM to generate better profile content
+"""
+
 import os
-import asyncio
-import random
-from bs4 import BeautifulSoup
-from playwright.async_api import async_playwright
-from groq import Groq
-from dotenv import load_dotenv
+import logging
+from typing import Dict, Any
 
-# Initialize hooks
-load_dotenv()
-COOKIE_VALUE = os.getenv("LINKEDIN_SESSION_COOKIE")
-GROQ_KEY = os.getenv("GROQ_API_KEY")
+try:
+    from groq import Groq
+    GROQ_AVAILABLE = True
+except ImportError:
+    GROQ_AVAILABLE = False
+    logging.warning("Groq not available")
 
-ai_client = Groq(api_key=GROQ_KEY)
+logger = logging.getLogger(__name__)
 
-def generate_profile_tweaks(current_headline, current_about):
-    """Passes current profile elements to Groq to analyze and generate enhancements."""
-    print("🧠 AI is analyzing your current text for optimizations...")
+async def optimize_profile() -> Dict[str, Any]:
+    """Optimize LinkedIn profile using AI"""
+    
+    if not GROQ_AVAILABLE:
+        logger.warning("Groq not available, returning mock optimization")
+        return {
+            "status": "error",
+            "message": "Groq LLM not available",
+            "suggestion": "Install groq package"
+        }
+    
     try:
-        system_prompt = (
-            "You are a world-class professional brand strategist and copywriter. "
-            "Analyze the user's current LinkedIn profile text and optimize it. "
-            "Make it highly engaging, impactful, clear, and filled with search keywords.\n\n"
-            "CRITICAL: You must respond in a strict format separating your adjustments "
-            "using the exact headers: [NEW_HEADLINE] and [NEW_ABOUT]. Do not include any conversational pleasantries."
+        api_key = os.getenv('GROQ_API_KEY')
+        model = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
+        
+        if not api_key:
+            return {"status": "error", "message": "Groq API key not set"}
+        
+        logger.info("Optimizing LinkedIn profile with Groq LLM")
+        
+        client = Groq(api_key=api_key)
+        
+        # Generate optimized headline
+        response_headline = client.chat.completions.create(
+            model=model,
+            messages=[{
+                "role": "user",
+                "content": """Generate a professional LinkedIn headline for an AI/ML engineer focused on:
+                - Full-stack development
+                - LinkedIn automation
+                - Cloud deployment
+                
+                Keep it under 220 characters. Make it catchy and SEO-friendly."""
+            }],
+            max_tokens=100,
+            temperature=0.7
         )
         
-        user_prompt = (
-            f"CURRENT HEADLINE:\n{current_headline}\n\n"
-            f"CURRENT ABOUT SECTION:\n{current_about}\n\n"
-            f"Improve both sections to make them sound exceptional and visually clean."
+        headline = response_headline.choices[0].message.content
+        
+        # Generate optimized about section
+        response_about = client.chat.completions.create(
+            model=model,
+            messages=[{
+                "role": "user",
+                "content": """Write a compelling LinkedIn about section (200-300 chars) for someone who:
+                - Builds AI agents for automation
+                - Works with LinkedIn, email, and cloud APIs
+                - Focuses on practical implementations
+                
+                Be personal, highlight achievements, and include a call-to-action."""
+            }],
+            max_tokens=300,
+            temperature=0.7
         )
         
-        response = ai_client.chat.completions.create(
-            model="mixtral-8x7b-32768",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
-            temperature=0.8
-        )
+        about = response_about.choices[0].message.content
         
-        output = response.choices[0].message.content.strip()
+        logger.info("Profile optimization completed")
         
-        # Parse the structured response back out cleanly
-        new_headline = output.split("[NEW_HEADLINE]")[1].split("[NEW_ABOUT]")[0].strip()
-        new_about = output.split("[NEW_ABOUT]")[1].strip()
+        return {
+            "status": "success",
+            "message": "Profile optimization suggestions generated",
+            "suggestions": {
+                "headline": headline,
+                "about": about,
+                "recommendations": [
+                    "Add relevant skills: Python, FastAPI, Groq, Playwright",
+                    "Include recent projects in experience section",
+                    "Add recommendations from colleagues",
+                    "Enable profile visibility to recruiter searches"
+                ]
+            }
+        }
         
-        return new_headline, new_about
     except Exception as e:
-        print(f"❌ LLM profile processing engine failed: {e}")
-        return None, None
+        logger.error(f"Profile optimization error: {e}")
+        return {
+            "status": "error",
+            "message": str(e)
+        }
 
-async def optimize_my_profile():
-    if not COOKIE_VALUE or not GROQ_KEY:
-        print("❌ Configuration Missing inside your .env file.")
-        return
-
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False) # Visually supervise the profile changes!
-        context = await browser.new_context()
-        
-        await context.add_cookies([{
-            "name": "li_at",
-            "value": COOKIE_VALUE,
-            "domain": ".www.linkedin.com",
-            "path": "/"
-        }])
-        
-        page = await context.new_page()
-        print("🤖 Navigating straight to your profile editing dashboard...")
-        await page.goto("https://linkedin.com") # Overrides directly to your personal logged-in profile
-        await page.wait_for_timeout(5000)
-        
-        # --- PHASE 1: READ PROFILE DATA ---
-        html_content = await page.content()
-        soup = BeautifulSoup(html_content, "html.parser")
-        
-        # Extract existing Headline
-        headline_element = soup.find("div", {"class": "text-body-medium"})
-        current_headline = headline_element.get_text().strip() if headline_element else "Not Found"
-        
-        # Extract existing Summary/About
-        about_element = soup.find("div", {"class": "display-flex phasing-modal-trigger-hook"})
-        current_about = about_element.get_text().strip() if about_element else "Not Found"
-        
-        print(f"\n📥 Extracted Current Headline:\n> \"{current_headline}\"")
-        
-        # --- PHASE 2: GENERATE THE OPTIMIZATIONS ---
-        new_headline, new_about = generate_profile_tweaks(current_headline, current_about)
-        
-        if not new_headline or not new_about:
-            print("❌ Stopping optimization run due to an issue generating modifications.")
-            await browser.close()
-            return
-            
-        print(f"\n✨ AI Recommended Headline:\n> \"{new_headline}\"")
-        
-        # --- PHASE 3: EXECUTE THE PROFILE UPDATE ---
-        # Direct navigation shortcut straight to your account intro structural editing model popup panel
-        print("\n⚙️ Opening intro section editor popup layer...")
-        await page.goto("https://linkedin.com/edit/forms/intro/new/")
-        await page.wait_for_timeout(3000)
-        
-        try:
-            # Locate the correct Headline textbox element
-            headline_input = page.locator("input[id^='single-line-text-form-component-']").first
-            if await headline_input.is_visible():
-                print("✍️ Overwriting old headline with optimized AI variation text...")
-                await headline_input.click()
-                # Clear existing text cleanly before filling
-                await page.keyboard.press("Control+A")
-                await page.keyboard.press("Backspace")
-                await headline_input.fill(new_headline)
-                await page.wait_for_timeout(2000)
-                
-                # Scroll down inside popup modal layer and trigger the Save event button
-                save_button = page.get_by_role("button", name="Save").first
-                await save_button.click()
-                print("✅ Headline successfully updated and synced live!")
-                await page.wait_for_timeout(4000)
-                
-        except Exception as edit_error:
-            print(f"⚠️ Headline save flow caught an issue: {edit_error}")
-
-        # Direct navigation shortcut to edit the summary/About section text modal panel box
-        print("\n⚙️ Navigating to your About section editor panel block...")
-        await page.goto("https://linkedin.com/edit/about/")
-        await page.wait_for_timeout(3000)
-        
-        try:
-            # Locate the primary text editing box
-            about_textarea = page.locator("textarea").first
-            if await about_textarea.is_visible():
-                print("✍️ Writing the advanced brand messaging description narrative...")
-                await about_textarea.click()
-                await page.keyboard.press("Control+A")
-                await page.keyboard.press("Backspace")
-                await about_textarea.fill(new_about)
-                await page.wait_for_timeout(2000)
-                
-                save_about = page.get_by_role("button", name="Save").first
-                await save_about.click()
-                print("✅ Summary About section text successfully optimized and saved!")
-                
-        except Exception as about_error:
-            print(f"⚠️ About text block field adjustment failed: {about_error}")
-            
-        print("\n🤖 Profile refinement sweep completed. Closing background session windows.")
-        await page.wait_for_timeout(3000)
-        await browser.close()
-
-if __name__ == "__main__":
-    asyncio.run(optimize_my_profile())
+async def run() -> Dict[str, Any]:
+    """Run the profile optimization agent"""
+    return await optimize_profile()

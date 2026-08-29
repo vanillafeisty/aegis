@@ -1,12 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  eslint: {
-    ignoreDuringBuilds: true,
+  swcMinify: true,
+  env: {
+    API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
   },
-  typescript: {
-    ignoreBuildErrors: true,
+  async rewrites() {
+    return {
+      fallback: [
+        {
+          source: '/api/:path*',
+          destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/:path*`,
+        },
+      ],
+    };
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

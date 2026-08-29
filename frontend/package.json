@@ -1,8 +1,7 @@
 {
   "name": "aegis-frontend",
-  "version": "1.0.0",
-  "description": "Aegis AI Agent - LinkedIn Automation Frontend",
-  "private": true,
+  "version": "2.0.0",
+  "description": "Aegis AI - LinkedIn & Email Automation Agent - Frontend",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,16 +9,19 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "next": "^14.0.0",
-    "axios": "^1.6.0",
-    "lucide-react": "^0.292.0"
+    "axios": "^1.7.0",
+    "lucide-react": "^1.37.0",
+    "next": "^14.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.0"
   },
   "devDependencies": {
-    "typescript": "^5.3.0",
-    "@types/node": "^20.10.0",
-    "@types/react": "^18.2.40",
-    "@types/react-dom": "^18.2.16"
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "typescript": "^5.3.0"
   }
 }

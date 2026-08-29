@@ -1,254 +1,258 @@
-# 🛡️ AEGIS - QUICK START GUIDE
+# 🚀 Aegis AI v2.0 - Quick Start Guide
 
-## 📥 What You Downloaded
+## ⚡ Get Running in 5 Minutes
 
-You have **aegis-complete.zip** - a fully built LinkedIn automation AI agent with:
-- ✅ Fixed Python backend (3 bugs corrected)
-- ✅ Beautiful Next.js React frontend
-- ✅ FastAPI server with all agents
-- ✅ Botanical-themed UI (sage green, Times New Roman)
-- ✅ Complete documentation
-- ✅ Startup scripts for Windows/Mac/Linux
-
----
-
-## ⚡ FASTEST START (2 Minutes)
-
-### Step 1: Extract
+### Step 1: Extract Zip File
 ```bash
-unzip aegis-complete.zip
-cd aegis-complete
+unzip aegis-complete-v2.zip
+cd aegis-fixed
 ```
 
-### Step 2: Run
-**Mac/Linux:**
+### Step 2: Backend Setup (Terminal 1)
 ```bash
-./start.sh
+cd backend
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start backend
+python app.py
 ```
 
-**Windows:**
-```bash
-start.bat
+You should see:
+```
+🚀 Starting Aegis AI Agent Platform v2.0.0
+📡 Groq LLM: llama-3.3-70b-versatile
+🔗 Zapier MCP: Enabled with HTTP streaming
+📧 SMTP: Gmail configured
+🌐 CORS: Enabled for localhost:3000
 ```
 
-### Step 3: Open Browser
+### Step 3: Frontend Setup (Terminal 2)
+```bash
+cd frontend
+
+# Install dependencies (first time only)
+npm install
+
+# Start frontend
+npm run dev
+```
+
+### Step 4: Open Browser
 ```
 http://localhost:3000
 ```
 
-### Step 4: Add Credentials
-The setup wizard will guide you through:
-1. LinkedIn credentials
-2. Gmail credentials
-3. OpenAI API key
-4. Review & activate
+**✅ Done! Dashboard should load**
 
 ---
 
-## 🔑 You'll Need These 6 Credentials
+## 📋 What You Get
 
-### 1. LinkedIn Session Cookie
-- Go to LinkedIn.com → Log in
-- Press F12 (DevTools)
-- Application → Cookies → search "li_at"
-- Copy the value (it's long)
+### Backend (`backend/`)
+- ✅ `app.py` - FastAPI server with MCP streaming
+- ✅ `agent_post.py` - LinkedIn posting
+- ✅ `agent_connect.py` - Send connections
+- ✅ `agent_email.py` - Send emails
+- ✅ `agent_profile_tweak.py` - AI profile optimization
+- ✅ `ai_agent_inbox.py` - Process messages
+- ✅ `requirements.txt` - Python dependencies
+- ✅ `.env` - Credentials (already populated with your data)
+- ✅ `.env.example` - Template file
 
-### 2. LinkedIn Access Token
-- From LinkedIn API
-- Similar to session cookie
+### Frontend (`frontend/`)
+- ✅ `app/page.tsx` - Main dashboard
+- ✅ `app/layout.tsx` - Root layout
+- ✅ `app/globals.css` - Styling
+- ✅ `package.json` - Node dependencies
+- ✅ `next.config.js` - Next.js configuration
+- ✅ `.env.local` - Frontend config
 
-### 3. Gmail Email
-- Your Gmail address (user@gmail.com)
-
-### 4. Gmail App Password
-- Go to myaccount.google.com/apppasswords
-- Generate one for Mail
-- Copy the 16-character password
-
-### 5. OpenAI API Key
-- Go to platform.openai.com/api-keys
-- Create new key
-- Copy it
-
-### 6. LinkedIn Client ID (Optional)
-- From LinkedIn App Registration
-- Or skip it
+### Documentation
+- ✅ `README.md` - Complete guide
+- ✅ `DEPLOYMENT.md` - Production deployment
+- ✅ `ANALYSIS_AND_SETUP.md` - Deep dive explanation
 
 ---
 
-## 🎮 Using Aegis
+## 🔑 Your Credentials Are Ready
 
-Once setup is complete, you can:
-
-**Post to LinkedIn:**
-```
-"Post: Check out my new AI project! 🚀"
-```
-
-**Send Connection Request:**
-```
-"Connect to https://linkedin.com/in/john-doe"
-```
-
-**Check Messages:**
-```
-"Check my messages"
-```
-
-**Optimize Profile:**
-```
-"Optimize my profile"
-```
-
----
-
-## 🆘 Something's Wrong?
-
-### Backend won't start
-```bash
-pip install -r requirements.txt
-playwright install chromium 
-python app.py
-```
-
-### Frontend won't start
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-### Credentials not working
-- Double-check LinkedIn cookie hasn't expired (get a fresh one)
-- Verify Gmail app password is correct
-- Check OpenAI API key is correct
-
-### More help?
-- Read **SETUP_GUIDE.md** (detailed step-by-step)
-- Read **README.md** (project overview)
-- Check API docs: http://localhost:8000/docs
-
----
-
-## 📁 Project Structure (Key Files)
+Your `.env` file already contains:
 
 ```
-aegis-complete/
-├── app.py                  ← FastAPI backend
-├── frontend/app/page.tsx   ← Main React component
-├── start.sh & start.bat    ← Startup scripts
-├── README.md               ← Full documentation
-├── SETUP_GUIDE.md         ← Detailed setup
-└── CHANGES.md             ← What's new & fixed
+✅ LINKEDIN_SESSION_COOKIE = your_linkedin_session_cookie
+✅ LINKEDIN_CLIENT_ID = your_linkedin_client_id
+✅ LINKEDIN_ACCESS_TOKEN = your_linkedin_access_token
+✅ GROQ_API_KEY = your_groq_api_key
+✅ GROQ_MODEL = llama-3.3-70b-versatile
+✅ SMTP_EMAIL = your_email@domain.com
+✅ SMTP_PASSWORD = your_smtp_password
+✅ ZAPIER_MCP_URL = https://mcp.zapier.com/api/v1/connect
 ```
-
----
-
-## ✨ What's Special
-
-🎨 **Beautiful UI**
-- Sage green botanical theme
-- Times New Roman bold typography
-- Smooth animations
-- Mobile responsive
-
-🤖 **Smart Agents**
-- Post to LinkedIn
-- Send connections
-- Auto-reply to messages
-- Optimize profile
-- Send emails
-
-💻 **Tech Stack**
-- FastAPI (backend)
-- Next.js 14 (frontend)
-- React (UI)
-- Playwright (browser automation)
-- OpenAI (intelligence)
-
----
-
-## 🚀 Common Commands
-
-```bash
-# Start both services (recommended)
-./start.sh              # Mac/Linux
-start.bat              # Windows
-
-# Start just backend
-python app.py
-
-# Start just frontend
-cd frontend && npm run dev
-
-# Build for production
-cd frontend && npm run build
-
-# See API documentation
-http://localhost:8000/docs
-```
-
----
-
-## ✅ Success = When You See
-
-1. Terminal shows "Uvicorn running on http://0.0.0.0:8000"
-2. Terminal shows "▲ Next.js" and "Local: http://localhost:3000"
-3. Browser shows Aegis logo and setup wizard
-4. You can enter credentials
-5. Chat interface appears with welcome message
 
 ---
 
 ## 🎯 Next Steps
 
-1. ✅ Extract the zip
-2. ✅ Run start.sh or start.bat
-3. ✅ Gather your 6 credentials
-4. ✅ Fill in the setup wizard
-5. ✅ Start chatting with Aegis
-6. ✅ Automate your LinkedIn!
+### 1. Test LinkedIn Posting
+- Go to Dashboard → LinkedIn tab
+- Write a test post
+- Click "🚀 Post"
+- Check your LinkedIn feed!
+
+### 2. Test Email
+- Go to Dashboard → Email tab
+- Enter recipient email
+- Add subject and message
+- Click "✉️ Send Email"
+- Check inbox!
+
+### 3. Test Zapier Integration
+- Go to Dashboard → Zapier tab
+- Enter workflow ID
+- Add JSON data
+- Click "🌊 Stream"
+- See real-time streaming response!
+
+### 4. Optimize Your Profile
+- Go to Dashboard → LinkedIn tab
+- Click "✨ Optimize Profile"
+- Get AI-generated headline and bio suggestions
+
+### 5. Process Inbox
+- Go to Dashboard → LinkedIn tab
+- Click "📬 Process Inbox"
+- AI will reply to your recent messages
 
 ---
 
-## 💡 Pro Tips
+## 🔧 Troubleshooting
 
-- Keep the browser window open while Aegis is working
-- Start with simple commands ("Post: Hello")
-- Check API docs for all endpoints
-- Keep credentials secure (don't share .env)
-- Customize colors in frontend/app/styles/globals.css
-
----
-
-## 📞 Need More Help?
-
-- **Quick Setup**: SETUP_GUIDE.md (70+ steps)
-- **Full Docs**: README.md
-- **What Changed**: CHANGES.md
-- **API Reference**: http://localhost:8000/docs
-- **Troubleshooting**: SETUP_GUIDE.md → Troubleshooting
-
----
-
-## 🎊 TL;DR
-
+### "Backend not responding"
 ```bash
-cd aegis-complete
-./start.sh
-# → Open http://localhost:3000
-# → Add credentials
-# → Start automating LinkedIn!
+# Check backend is running
+# Terminal should show: INFO: Uvicorn running on http://0.0.0.0:8000
+
+# Kill and restart
+# Ctrl+C in backend terminal
+# Run: python app.py
 ```
 
+### "LinkedIn session expired"
+- Get fresh session cookie from Chrome DevTools
+- Update `backend/.env`
+- Restart backend
+
+### "Port 8000 already in use"
+```bash
+# Linux/Mac
+lsof -i :8000
+kill -9 <PID>
+
+# Windows
+netstat -ano | findstr :8000
+taskkill /PID <PID> /F
+```
+
+### "npm: command not found"
+- Install Node.js from nodejs.org
+- Verify: `node --version` should show v20+
+
+### "python: command not found"
+- Install Python from python.org
+- Verify: `python --version` should show 3.12+
+
 ---
 
-**Built with ❤️ for autonomous LinkedIn intelligence**
+## 🎓 Learning Path
 
-🛡️ **Aegis v1.0** - Your AI LinkedIn Agent
-
-*Everything is ready. Time to automate.* 🚀
+1. **Start Here**: Open `http://localhost:3000` and test all buttons
+2. **Understand Flow**: Read `ANALYSIS_AND_SETUP.md`
+3. **Deep Dive**: Read `README.md` for full documentation
+4. **Deploy**: Follow `DEPLOYMENT.md` when ready for production
 
 ---
 
-**Questions?** Check the docs inside aegis-complete/
+## 📡 API Endpoints
+
+All endpoints are available at `http://localhost:8000`
+
+### View API Docs
+- Open `http://localhost:8000/` for full API documentation
+- Or `http://localhost:8000/docs` for Swagger UI (if enabled)
+
+### Key Endpoints
+- `POST /agents/post` - LinkedIn posting
+- `POST /agents/connect` - Send connections
+- `POST /agents/email` - Send emails
+- `POST /agents/profile` - Profile optimization
+- `POST /agents/inbox` - Process inbox
+- `POST /agents/zapier/stream` - Zapier MCP streaming
+
+---
+
+## 🌟 Advanced Features
+
+### MCP Streaming
+For large responses or long-running tasks, use the streaming endpoint:
+
+```bash
+curl -X POST http://localhost:8000/agents/zapier/stream \
+  -H "Content-Type: application/json" \
+  -d '{"workflow_id": "wf_123", "data": {"key": "value"}}'
+```
+
+Response comes in chunks:
+```json
+{"status":"started","workflow_id":"wf_123"}
+{"progress":"10%","data":{...}}
+{"progress":"50%","data":{...}}
+{"status":"completed","workflow_id":"wf_123"}
+```
+
+### Async Processing
+All endpoints are fully async for non-blocking I/O. Multiple requests run in parallel!
+
+---
+
+## 🔐 Security Notes
+
+⚠️ **Important**: Never commit `.env` file to GitHub
+
+```bash
+# Add to .gitignore (already done)
+echo ".env" >> .gitignore
+```
+
+For production:
+- Use environment variables on cloud platform (Render, Heroku, etc.)
+- Never expose `.env` file in repositories
+- Rotate credentials regularly
+- LinkedIn cookies expire every 30-60 days
+
+---
+
+## 📚 Full Documentation
+
+For complete documentation, see:
+- `README.md` - Full guide with architecture
+- `DEPLOYMENT.md` - Production deployment
+- `ANALYSIS_AND_SETUP.md` - Deep technical analysis
+
+---
+
+## 🆘 Still Having Issues?
+
+1. Check that Python 3.12+ is installed: `python --version`
+2. Check that Node 20+ is installed: `node --version`
+3. Ensure both backends are running in separate terminals
+4. Check `.env` file has all credentials
+5. Look at terminal output for error messages
+6. Try restarting both backend and frontend
+
+---
+
+**Happy automating! 🎉**
+
+**Version**: 2.0.0 | **MCP Streaming**: Enabled | **Status**: Production Ready
