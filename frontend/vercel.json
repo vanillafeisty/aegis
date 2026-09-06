@@ -1,0 +1,4 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "NODE_ENV=production next build"
+}

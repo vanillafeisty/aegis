@@ -49,10 +49,10 @@ fun ChatScreen(
     val isBusy by viewModel.isAgentBusy.collectAsState()
     val statusText by viewModel.agentStatusText.collectAsState()
     val steps by viewModel.activeExecutionSteps.collectAsState()
+    val settings by viewModel.settings.collectAsState()
 
     var textInput by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(messages.size, isBusy) {
         if (messages.isNotEmpty()) {
@@ -63,8 +63,73 @@ fun ChatScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(WarmBeigeBackground)
     ) {
+        // Minimalist Anthropic Workspace Header
+        Surface(
+            color = SoftCreamSurface,
+            border = androidx.compose.foundation.BorderStroke(1.dp, WarmStoneBorder),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .clip(CircleShape)
+                            .background(TerracottaAccent)
+                    )
+                    Text(
+                        text = "Aegis Assistant",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontFamily = FontFamily.Serif,
+                        color = CharcoalPrimary,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = MutedBeigeCard,
+                        border = androidx.compose.foundation.BorderStroke(1.dp, WarmStoneBorder)
+                    ) {
+                        Text(
+                            text = if (settings?.linkedinConnected == true) "LinkedIn Live ✓" else "Groq LLaMA 3.3",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontFamily = FontFamily.Serif,
+                            color = CharcoalMuted,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
+
+                    IconButton(
+                        onClick = { viewModel.clearHistory() },
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.DeleteSweep,
+                            contentDescription = "Clear Chat",
+                            tint = CharcoalMuted,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+            }
+        }
+
         // Live Execution Steps
         LiveExecutionBanner(statusText = statusText, steps = steps)
 
@@ -79,7 +144,7 @@ fun ChatScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(messages, key = { it.id }) { message ->
-                ChatMessageItem(
+                AnthropicChatMessageItem(
                     message = message,
                     onNavigateToHub = { section ->
                         viewModel.setHubSection(section)
@@ -90,17 +155,17 @@ fun ChatScreen(
         }
 
         // Quick Action Chips Row
-        QuickActionsBar(
+        AnthropicQuickActionsBar(
             onSelectAction = { promptText ->
                 textInput = promptText
             },
             isBusy = isBusy
         )
 
-        // Bottom Chat Input Box
+        // Bottom Chat Input Box (Anthropic Style Pill)
         Surface(
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 6.dp,
+            color = SoftCreamSurface,
+            border = androidx.compose.foundation.BorderStroke(1.dp, WarmStoneBorder),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(
@@ -121,20 +186,22 @@ fun ChatScreen(
                             .testTag("chat_input_field"),
                         placeholder = {
                             Text(
-                                text = "Tell Aegis what to automate...",
+                                text = "Ask Aegis to write posts, connect, or sweep inbox...",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                fontFamily = FontFamily.Serif,
+                                color = CharcoalLight
                             )
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = DarkGreen,
-                            unfocusedBorderColor = BorderColor,
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
+                            focusedBorderColor = TerracottaAccent,
+                            unfocusedBorderColor = WarmStoneBorder,
+                            focusedContainerColor = WarmBeigeBackground,
+                            unfocusedContainerColor = WarmBeigeBackground,
+                            cursorColor = TerracottaAccent
                         ),
-                        shape = RoundedCornerShape(24.dp),
+                        shape = RoundedCornerShape(20.dp),
                         singleLine = false,
-                        maxLines = 3,
+                        maxLines = 4,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                         keyboardActions = KeyboardActions(
                             onSend = {
@@ -156,23 +223,23 @@ fun ChatScreen(
                         },
                         modifier = Modifier
                             .testTag("chat_send_button")
-                            .size(50.dp),
+                            .size(46.dp),
                         shape = CircleShape,
-                        containerColor = if (textInput.isNotBlank() && !isBusy) DarkGreen else SageGreen.copy(alpha = 0.5f),
-                        contentColor = PureWhite,
-                        elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 2.dp)
+                        containerColor = if (textInput.isNotBlank() && !isBusy) TerracottaAccent else MutedBeigeCard,
+                        contentColor = if (textInput.isNotBlank() && !isBusy) SoftCreamSurface else CharcoalLight,
+                        elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp)
                     ) {
                         if (isBusy) {
                             CircularProgressIndicator(
-                                modifier = Modifier.size(20.dp),
-                                color = PureWhite,
+                                modifier = Modifier.size(18.dp),
+                                color = TerracottaAccent,
                                 strokeWidth = 2.dp
                             )
                         } else {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.Send,
                                 contentDescription = "Send",
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(18.dp)
                             )
                         }
                     }
@@ -180,10 +247,11 @@ fun ChatScreen(
 
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "💡 Try: \"Post: Scaling our autonomous workflows\" or \"Check messages\"",
+                    text = "Aegis v2.4 • Connected directly to LinkedIn API and Groq LLaMA-3.3-70B",
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(start = 12.dp)
+                    color = CharcoalLight,
+                    fontFamily = FontFamily.Serif,
+                    modifier = Modifier.padding(start = 8.dp)
                 )
             }
         }
@@ -191,7 +259,7 @@ fun ChatScreen(
 }
 
 @Composable
-fun ChatMessageItem(
+fun AnthropicChatMessageItem(
     message: ChatMessageEntity,
     onNavigateToHub: (HubSection) -> Unit
 ) {
@@ -207,18 +275,25 @@ fun ChatMessageItem(
         if (!isUser) {
             Box(
                 modifier = Modifier
-                    .size(36.dp)
+                    .size(32.dp)
                     .clip(CircleShape)
-                    .background(DarkGreen),
+                    .background(MutedBeigeCard)
+                    .border(1.dp, WarmStoneBorder, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "🛡️", fontSize = 16.sp)
+                Text(
+                    text = "A",
+                    fontFamily = FontFamily.Serif,
+                    fontWeight = FontWeight.Bold,
+                    color = TerracottaAccent,
+                    fontSize = 15.sp
+                )
             }
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(10.dp))
         }
 
         Column(
-            modifier = Modifier.widthIn(max = 320.dp),
+            modifier = Modifier.widthIn(max = 330.dp),
             horizontalAlignment = if (isUser) Alignment.End else Alignment.Start
         ) {
             Surface(
@@ -228,42 +303,44 @@ fun ChatMessageItem(
                     bottomStart = if (isUser) 16.dp else 4.dp,
                     bottomEnd = if (isUser) 4.dp else 16.dp
                 ),
-                color = if (isUser) DarkGreen else MaterialTheme.colorScheme.surface,
-                tonalElevation = if (isUser) 0.dp else 2.dp,
-                shadowElevation = 1.dp,
-                border = if (isUser) null else androidx.compose.foundation.BorderStroke(1.dp, BorderColor)
+                color = if (isUser) TerracottaSoft else SoftCreamSurface,
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    if (isUser) TerracottaBorder else WarmStoneBorder
+                )
             ) {
                 Column(
                     modifier = Modifier.padding(14.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     if (!isUser && message.actionType != null) {
-                        ActionTag(actionType = message.actionType)
+                        AnthropicActionTag(actionType = message.actionType)
                     }
 
                     Text(
                         text = message.content,
                         style = MaterialTheme.typography.bodyLarge,
-                        color = if (isUser) PureWhite else MaterialTheme.colorScheme.onSurface,
+                        fontFamily = FontFamily.Serif,
+                        color = CharcoalPrimary,
                         lineHeight = 22.sp
                     )
 
                     // Navigation deep links for quick agent interactions
                     if (!isUser && message.actionType != null) {
                         when (message.actionType) {
-                            "post" -> HubQuickLinkButton(label = "View Post History →") {
+                            "post" -> AnthropicHubQuickLinkButton(label = "View Post History →") {
                                 onNavigateToHub(HubSection.POSTS)
                             }
-                            "connect" -> HubQuickLinkButton(label = "View Outreach Pipeline →") {
+                            "connect" -> AnthropicHubQuickLinkButton(label = "View Outreach Pipeline →") {
                                 onNavigateToHub(HubSection.CONNECT)
                             }
-                            "inbox" -> HubQuickLinkButton(label = "Open Inbox Sweep →") {
+                            "inbox" -> AnthropicHubQuickLinkButton(label = "Open Inbox Sweep →") {
                                 onNavigateToHub(HubSection.INBOX)
                             }
-                            "profile" -> HubQuickLinkButton(label = "View Profile Comparison →") {
+                            "profile" -> AnthropicHubQuickLinkButton(label = "View Profile Comparison →") {
                                 onNavigateToHub(HubSection.PROFILE)
                             }
-                            "email" -> HubQuickLinkButton(label = "Check Email Logs →") {
+                            "email" -> AnthropicHubQuickLinkButton(label = "Check Email Logs →") {
                                 onNavigateToHub(HubSection.EMAIL)
                             }
                         }
@@ -275,7 +352,8 @@ fun ChatMessageItem(
             Text(
                 text = formattedTime,
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontFamily = FontFamily.Serif,
+                color = CharcoalLight,
                 modifier = Modifier.padding(horizontal = 6.dp)
             )
         }
@@ -284,16 +362,17 @@ fun ChatMessageItem(
             Spacer(modifier = Modifier.width(8.dp))
             Box(
                 modifier = Modifier
-                    .size(36.dp)
+                    .size(32.dp)
                     .clip(CircleShape)
-                    .background(LightSage),
+                    .background(MutedBeigeCard)
+                    .border(1.dp, WarmStoneBorder, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Filled.Person,
+                    imageVector = Icons.Default.Person,
                     contentDescription = "User",
-                    tint = DarkGreen,
-                    modifier = Modifier.size(20.dp)
+                    tint = CharcoalPrimary,
+                    modifier = Modifier.size(16.dp)
                 )
             }
         }
@@ -301,19 +380,20 @@ fun ChatMessageItem(
 }
 
 @Composable
-fun ActionTag(actionType: String) {
+fun AnthropicActionTag(actionType: String) {
     val (label, icon, color) = when (actionType) {
-        "post" -> Triple("LinkedIn Feed Post", Icons.Outlined.Create, DarkGreen)
-        "connect" -> Triple("Outbound Connect", Icons.Outlined.PersonAdd, DarkGreen)
-        "inbox" -> Triple("Inbox Auto-Reply", Icons.Outlined.QuestionAnswer, DarkGreen)
-        "profile" -> Triple("Profile Optimization", Icons.Outlined.AutoAwesome, AmberAccent)
-        "email" -> Triple("SMTP Email Alert", Icons.Outlined.Email, DarkGreen)
-        else -> Triple("Aegis Assistant", Icons.Outlined.SmartToy, DarkGreen)
+        "post" -> Triple("LinkedIn Feed Post Live", Icons.Outlined.Create, TerracottaAccent)
+        "connect" -> Triple("Connection Invitation", Icons.Outlined.PersonAdd, DarkSage)
+        "inbox" -> Triple("Inbox Auto-Sweep", Icons.Outlined.QuestionAnswer, DarkSage)
+        "profile" -> Triple("Profile Optimization", Icons.Outlined.AutoAwesome, DarkAmber)
+        "email" -> Triple("SMTP Email Alert", Icons.Outlined.Email, TerracottaAccent)
+        else -> Triple("Aegis Assistant", Icons.Outlined.SmartToy, CharcoalPrimary)
     }
 
     Surface(
-        color = color.copy(alpha = 0.12f),
-        shape = RoundedCornerShape(8.dp)
+        color = MutedBeigeCard,
+        shape = RoundedCornerShape(8.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, WarmStoneBorder)
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
@@ -324,20 +404,21 @@ fun ActionTag(actionType: String) {
                 imageVector = icon,
                 contentDescription = null,
                 tint = color,
-                modifier = Modifier.size(13.dp)
+                modifier = Modifier.size(12.dp)
             )
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelSmall,
+                fontFamily = FontFamily.Serif,
                 color = color,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Medium
             )
         }
     }
 }
 
 @Composable
-fun HubQuickLinkButton(label: String, onClick: () -> Unit) {
+fun AnthropicHubQuickLinkButton(label: String, onClick: () -> Unit) {
     TextButton(
         onClick = onClick,
         contentPadding = PaddingValues(horizontal = 0.dp, vertical = 4.dp),
@@ -346,14 +427,15 @@ fun HubQuickLinkButton(label: String, onClick: () -> Unit) {
         Text(
             text = label,
             style = MaterialTheme.typography.labelMedium,
-            color = DarkGreen,
+            fontFamily = FontFamily.Serif,
+            color = TerracottaAccent,
             fontWeight = FontWeight.Bold
         )
     }
 }
 
 @Composable
-fun QuickActionsBar(
+fun AnthropicQuickActionsBar(
     onSelectAction: (String) -> Unit,
     isBusy: Boolean
 ) {
@@ -366,38 +448,38 @@ fun QuickActionsBar(
             .padding(horizontal = 16.dp, vertical = 6.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        QuickActionChip(
+        AnthropicQuickActionChip(
             emoji = "📝",
             label = "Publish Post",
-            prompt = "Post: Check out our newest autonomous AI system release! 🚀 #AIAgents #Innovation",
+            prompt = "Post: Excited to announce our autonomous AI agent workflows! #AIAgents #Innovation",
             onSelect = onSelectAction,
             enabled = !isBusy
         )
-        QuickActionChip(
+        AnthropicQuickActionChip(
             emoji = "🤝",
             label = "Connect",
             prompt = "Connect to https://linkedin.com/in/marcus-vance-pm",
             onSelect = onSelectAction,
             enabled = !isBusy
         )
-        QuickActionChip(
+        AnthropicQuickActionChip(
             emoji = "📬",
             label = "Sweep Inbox",
-            prompt = "Sweep inbox and reply to unread messages",
+            prompt = "Sweep inbox and draft smart replies",
             onSelect = onSelectAction,
             enabled = !isBusy
         )
-        QuickActionChip(
-            emoji = "⚙️",
-            label = "Tune Profile",
-            prompt = "Optimize my profile headline and summary",
+        AnthropicQuickActionChip(
+            emoji = "✨",
+            label = "Optimize Profile",
+            prompt = "Optimize my LinkedIn headline and summary",
             onSelect = onSelectAction,
             enabled = !isBusy
         )
-        QuickActionChip(
-            emoji = "📧",
-            label = "SMTP Alert",
-            prompt = "Send email to verification@company.com, subject: Aegis Alert, body: System status confirmed online.",
+        AnthropicQuickActionChip(
+            emoji = "✉️",
+            label = "Send Email",
+            prompt = "Send email to team@company.com, subject: Status Update, body: All systems running autonomously.",
             onSelect = onSelectAction,
             enabled = !isBusy
         )
@@ -405,7 +487,7 @@ fun QuickActionsBar(
 }
 
 @Composable
-fun QuickActionChip(
+fun AnthropicQuickActionChip(
     emoji: String,
     label: String,
     prompt: String,
@@ -413,9 +495,9 @@ fun QuickActionChip(
     enabled: Boolean
 ) {
     Surface(
-        shape = RoundedCornerShape(18.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        border = androidx.compose.foundation.BorderStroke(1.dp, BorderColor),
+        shape = RoundedCornerShape(14.dp),
+        color = SoftCreamSurface,
+        border = androidx.compose.foundation.BorderStroke(1.dp, WarmStoneBorder),
         modifier = Modifier.clickable(enabled = enabled) { onSelect(prompt) }
     ) {
         Row(
@@ -423,11 +505,12 @@ fun QuickActionChip(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            Text(text = emoji, fontSize = 14.sp)
+            Text(text = emoji, fontSize = 13.sp)
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurface,
+                fontFamily = FontFamily.Serif,
+                color = CharcoalPrimary,
                 fontWeight = FontWeight.Medium
             )
         }

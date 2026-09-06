@@ -1,57 +1,67 @@
 package com.example.aegis.ui.theme
 
 import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val LightColorScheme = lightColorScheme(
-    primary = DarkGreen,
-    onPrimary = PureWhite,
-    primaryContainer = LightSage,
-    onPrimaryContainer = ForestGreen,
-    secondary = SageGreen,
-    onSecondary = PureWhite,
-    secondaryContainer = UltraLightSage,
-    onSecondaryContainer = DarkGreen,
-    tertiary = EmeraldAccent,
-    onTertiary = PureWhite,
-    background = OffWhite,
-    onBackground = ForestGreen,
-    surface = PureWhite,
-    onSurface = ForestGreen,
-    surfaceVariant = UltraLightSage,
-    onSurfaceVariant = MutedText,
-    outline = BorderColor,
-    error = CrimsonError,
-    onError = PureWhite
+    primary = TerracottaAccent,
+    onPrimary = SoftCreamSurface,
+    primaryContainer = TerracottaSoft,
+    onPrimaryContainer = TerracottaDark,
+    secondary = CharcoalPrimary,
+    onSecondary = SoftCreamSurface,
+    secondaryContainer = MutedBeigeCard,
+    onSecondaryContainer = CharcoalPrimary,
+    tertiary = DarkSage,
+    onTertiary = SoftCreamSurface,
+    tertiaryContainer = PastelSage,
+    onTertiaryContainer = DarkSage,
+    background = WarmBeigeBackground,
+    onBackground = CharcoalPrimary,
+    surface = SoftCreamSurface,
+    onSurface = CharcoalPrimary,
+    surfaceVariant = MutedBeigeCard,
+    onSurfaceVariant = CharcoalMuted,
+    outline = WarmStoneBorder,
+    outlineVariant = SubtleBeigeHover,
+    error = DarkCrimson,
+    onError = SoftCreamSurface,
+    errorContainer = PastelCrimson,
+    onErrorContainer = DarkCrimson
 )
 
 private val DarkColorScheme = darkColorScheme(
-    primary = LightSage,
-    onPrimary = DarkBackground,
-    primaryContainer = DarkSurfaceVariant,
-    onPrimaryContainer = LightSage,
-    secondary = SageGreen,
-    onSecondary = DarkBackground,
-    secondaryContainer = DarkSurface,
-    onSecondaryContainer = LightSage,
-    tertiary = EmeraldAccent,
-    onTertiary = DarkBackground,
-    background = DarkBackground,
+    primary = TerracottaAccent,
+    onPrimary = DarkWarmBg,
+    primaryContainer = DarkWarmCard,
+    onPrimaryContainer = TerracottaSoft,
+    secondary = DarkTextPrimary,
+    onSecondary = DarkWarmBg,
+    secondaryContainer = DarkWarmSurface,
+    onSecondaryContainer = DarkTextPrimary,
+    tertiary = PastelSage,
+    onTertiary = DarkWarmBg,
+    tertiaryContainer = DarkWarmCard,
+    onTertiaryContainer = DarkSage,
+    background = DarkWarmBg,
     onBackground = DarkTextPrimary,
-    surface = DarkSurface,
+    surface = DarkWarmSurface,
     onSurface = DarkTextPrimary,
-    surfaceVariant = DarkSurfaceVariant,
-    onSurfaceVariant = DarkTextSecondary,
-    outline = DarkBorder,
-    error = CrimsonError,
-    onError = PureWhite
+    surfaceVariant = DarkWarmCard,
+    onSurfaceVariant = DarkTextMuted,
+    outline = DarkWarmBorder,
+    outlineVariant = DarkWarmCard,
+    error = DarkCrimson,
+    onError = DarkWarmBg,
+    errorContainer = DarkWarmCard,
+    onErrorContainer = PastelCrimson
 )
 
 @Composable
@@ -76,3 +86,4 @@ fun AegisTheme(
         content = content
     )
 }
+

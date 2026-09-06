@@ -117,9 +117,33 @@ object AegisAiEngine {
         return ParsedCommand(action = AgentAction.UNKNOWN, rawQuery = trimmed)
     }
 
-    suspend fun generatePost(topic: String, tone: String = "Thought Leadership"): Pair<String, String> {
-        delay(600)
+    suspend fun generatePost(
+        topic: String,
+        tone: String = "Thought Leadership",
+        groqApiKey: String? = null,
+        groqModel: String = "llama-3.3-70b-versatile"
+    ): Pair<String, String> {
         val cleanTopic = topic.trim()
+
+        if (!groqApiKey.isNullOrBlank()) {
+            val systemPrompt = "You are Aegis, an elite LinkedIn ghostwriter and B2B growth strategist. Create high-engagement, viral-formatted LinkedIn posts with hook, body points, call-to-action, and relevant hashtags at the bottom."
+            val userPrompt = "Write a top-tier LinkedIn post on: \"$cleanTopic\". Tone: $tone. Keep it concise, punchy with line breaks, emojis, and 3-5 relevant hashtags at the very end."
+            val groqResult = GroqApiClient.generateCompletion(
+                apiKey = groqApiKey,
+                model = groqModel,
+                systemPrompt = systemPrompt,
+                userPrompt = userPrompt,
+                maxTokens = 600
+            )
+            if (groqResult.isSuccess) {
+                val fullPost = groqResult.getOrThrow()
+                val hashtagRegex = Regex("""#\w+""")
+                val tags = hashtagRegex.findAll(fullPost).map { it.value }.joinToString(" ")
+                return Pair(fullPost, tags.ifBlank { "#AIAgents #Automation #Innovation #Tech" })
+            }
+        }
+
+        delay(600)
         val hashtags = when {
             cleanTopic.contains("ai", ignoreCase = true) -> "#AIAgents #ArtificialIntelligence #Automation #FutureOfWork #MachineLearning"
             cleanTopic.contains("build", ignoreCase = true) || cleanTopic.contains("product", ignoreCase = true) -> "#BuildingInPublic #ProductStrategy #TechInnovation #StartupLife"
@@ -164,9 +188,32 @@ $hashtags
         return Pair(post, hashtags)
     }
 
-    suspend fun generateConnectionNote(fullName: String, headline: String, company: String): String {
-        delay(500)
+    suspend fun generateConnectionNote(
+        fullName: String,
+        headline: String,
+        company: String,
+        groqApiKey: String? = null,
+        groqModel: String = "llama-3.3-70b-versatile"
+    ): String {
         val firstName = fullName.split(" ").firstOrNull() ?: fullName
+
+        if (!groqApiKey.isNullOrBlank()) {
+            val systemPrompt = "You are an AI outreach specialist. Write a warm, authentic 1-2 sentence LinkedIn connection request note under 280 characters."
+            val userPrompt = "Write a personalized LinkedIn connection note for $fullName ($headline at $company). Keep under 280 characters."
+            val groqResult = GroqApiClient.generateCompletion(
+                apiKey = groqApiKey,
+                model = groqModel,
+                systemPrompt = systemPrompt,
+                userPrompt = userPrompt,
+                maxTokens = 120
+            )
+            if (groqResult.isSuccess) {
+                val note = groqResult.getOrThrow()
+                return if (note.length > 295) note.substring(0, 290) + "..." else note
+            }
+        }
+
+        delay(500)
         val templates = listOf(
             "Hi $firstName, loved your work on $headline${if (company.isNotBlank()) " at $company" else ""}. Would love to connect and follow your journey here on LinkedIn!",
             "Hi $firstName, noticed your background in $headline. Always keen to connect with fellow leaders in this space and exchange insights!",
@@ -175,11 +222,31 @@ $hashtags
         return templates[Random.nextInt(templates.size)]
     }
 
-    suspend fun generateInboxReply(senderName: String, inboundMessage: String): String {
-        delay(700)
+    suspend fun generateInboxReply(
+        senderName: String,
+        inboundMessage: String,
+        groqApiKey: String? = null,
+        groqModel: String = "llama-3.3-70b-versatile"
+    ): String {
         val firstName = senderName.split(" ").firstOrNull() ?: senderName
-        val lower = inboundMessage.lowercase()
 
+        if (!groqApiKey.isNullOrBlank()) {
+            val systemPrompt = "You are an executive assistant managing LinkedIn DMs. Write a polite, high-converting, professional response in 2-3 sentences."
+            val userPrompt = "Generate a reply to this LinkedIn DM from $senderName: \"$inboundMessage\""
+            val groqResult = GroqApiClient.generateCompletion(
+                apiKey = groqApiKey,
+                model = groqModel,
+                systemPrompt = systemPrompt,
+                userPrompt = userPrompt,
+                maxTokens = 200
+            )
+            if (groqResult.isSuccess) {
+                return groqResult.getOrThrow()
+            }
+        }
+
+        delay(700)
+        val lower = inboundMessage.lowercase()
         return when {
             lower.contains("call") || lower.contains("meeting") || lower.contains("time") -> 
                 "Hi $firstName, thanks for reaching out! I'd be happy to discuss further. Let me check my schedule for early next week and send over a few slots that work."
@@ -192,7 +259,32 @@ $hashtags
         }
     }
 
-    suspend fun optimizeProfile(currentHeadline: String, currentAbout: String): Pair<String, String> {
+    suspend fun optimizeProfile(
+        currentHeadline: String,
+        currentAbout: String,
+        groqApiKey: String? = null,
+        groqModel: String = "llama-3.3-70b-versatile"
+    ): Pair<String, String> {
+        if (!groqApiKey.isNullOrBlank()) {
+            val systemPrompt = "You are a LinkedIn profile optimization expert. Return an optimized headline and about section."
+            val userPrompt = "Optimize this LinkedIn profile:\nCurrent Headline: $currentHeadline\nCurrent About: $currentAbout\n\nReturn in this exact format:\nHEADLINE: <optimized headline under 120 chars>\nABOUT: <optimized about section>"
+            val groqResult = GroqApiClient.generateCompletion(
+                apiKey = groqApiKey,
+                model = groqModel,
+                systemPrompt = systemPrompt,
+                userPrompt = userPrompt,
+                maxTokens = 500
+            )
+            if (groqResult.isSuccess) {
+                val output = groqResult.getOrThrow()
+                if (output.contains("HEADLINE:") && output.contains("ABOUT:")) {
+                    val head = output.substringAfter("HEADLINE:").substringBefore("ABOUT:").trim()
+                    val abt = output.substringAfter("ABOUT:").trim()
+                    return Pair(head, abt)
+                }
+            }
+        }
+
         delay(900)
         val optimizedHeadline = if (currentHeadline.isNotBlank() && currentHeadline.length > 5) {
             "🚀 Building Autonomous AI Agents | Senior Tech Strategist | Scaling Systems & Product Growth | Speaker & Advisor"

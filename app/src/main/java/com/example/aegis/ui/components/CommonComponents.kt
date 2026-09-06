@@ -28,18 +28,19 @@ import com.example.aegis.ui.viewmodel.ExecutionStep
 @Composable
 fun AegisTopBar(
     settings: CredentialSettingsEntity?,
-    onSettingsClick: () -> Unit
+    currentTab: AppTab,
+    onNavigate: (AppTab) -> Unit
 ) {
     Surface(
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 3.dp,
+        color = SoftCreamSurface,
+        border = androidx.compose.foundation.BorderStroke(1.dp, WarmStoneBorder),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .padding(horizontal = 18.dp, vertical = 12.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -52,56 +53,78 @@ fun AegisTopBar(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(40.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(DarkGreen),
+                            .size(32.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(TerracottaAccent),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "🛡️",
-                            fontSize = 20.sp
+                            text = "A",
+                            fontFamily = FontFamily.Serif,
+                            color = SoftCreamSurface,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
                         )
                     }
                     Column {
                         Text(
-                            text = "Aegis AI Agent",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            text = "Aegis",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = CharcoalPrimary,
                             fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily.Serif
+                            fontFamily = FontFamily.Serif,
+                            letterSpacing = 0.5.sp
                         )
                         Text(
-                            text = "Autonomous LinkedIn Outreach & Automation",
+                            text = "Autonomous LinkedIn Intelligence",
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            fontFamily = FontFamily.Serif,
+                            color = CharcoalMuted
                         )
                     }
                 }
 
-                IconButton(
-                    onClick = onSettingsClick,
-                    modifier = Modifier
-                        .testTag("topbar_settings_button")
-                        .size(40.dp)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Settings,
-                        contentDescription = "Settings",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    IconButton(
+                        onClick = { onNavigate(AppTab.OPENING) },
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Home,
+                            contentDescription = "Welcome Home",
+                            tint = if (currentTab == AppTab.OPENING) TerracottaAccent else CharcoalMuted,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    IconButton(
+                        onClick = { onNavigate(AppTab.CONNECT) },
+                        modifier = Modifier
+                            .testTag("topbar_settings_button")
+                            .size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Tune,
+                            contentDescription = "Connection Settings",
+                            tint = if (currentTab == AppTab.CONNECT) TerracottaAccent else CharcoalMuted,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
                 }
             }
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Integration status badges
+            // Integration status badges (Anthropic style)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 StatusBadge(
-                    label = "LinkedIn",
+                    label = "LinkedIn API",
                     isConnected = settings?.linkedinConnected == true,
                     testTag = "badge_linkedin"
                 )
@@ -111,16 +134,17 @@ fun AegisTopBar(
                     testTag = "badge_gmail"
                 )
                 StatusBadge(
-                    label = "AI Engine",
+                    label = "Groq AI",
                     isConnected = settings?.aiConnected == true,
                     testTag = "badge_ai"
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "Stealth Active",
+                    text = "Stealth Cadence",
                     style = MaterialTheme.typography.labelSmall,
-                    color = EmeraldAccent,
-                    fontWeight = FontWeight.SemiBold
+                    color = CharcoalLight,
+                    fontFamily = FontFamily.Serif,
+                    fontWeight = FontWeight.Medium
                 )
             }
         }
@@ -133,33 +157,34 @@ fun StatusBadge(
     isConnected: Boolean,
     testTag: String
 ) {
-    val bgColor = if (isConnected) EmeraldAccent.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceVariant
-    val textColor = if (isConnected) DarkGreen else MaterialTheme.colorScheme.onSurfaceVariant
-    val borderColor = if (isConnected) EmeraldAccent.copy(alpha = 0.4f) else BorderColor
+    val bgColor = if (isConnected) PastelSage else MutedBeigeCard
+    val textColor = if (isConnected) DarkSage else CharcoalMuted
+    val borderColor = if (isConnected) SageBorder else WarmStoneBorder
 
     Box(
         modifier = Modifier
             .testTag(testTag)
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(12.dp))
             .background(bgColor)
-            .border(1.dp, borderColor, RoundedCornerShape(20.dp))
-            .padding(horizontal = 10.dp, vertical = 4.dp),
+            .border(1.dp, borderColor, RoundedCornerShape(12.dp))
+            .padding(horizontal = 8.dp, vertical = 4.dp),
         contentAlignment = Alignment.Center
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Box(
                 modifier = Modifier
-                    .size(7.dp)
+                    .size(6.dp)
                     .clip(CircleShape)
-                    .background(if (isConnected) EmeraldAccent else Color.Gray)
+                    .background(if (isConnected) DarkSage else CharcoalLight)
             )
             Text(
                 text = "${if (isConnected) "✓" else "○"} $label",
                 style = MaterialTheme.typography.labelSmall,
                 color = textColor,
+                fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Medium
             )
         }
@@ -172,26 +197,87 @@ fun AegisBottomNavigationBar(
     onTabSelected: (AppTab) -> Unit
 ) {
     NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surface,
-        tonalElevation = 8.dp,
+        containerColor = SoftCreamSurface,
+        tonalElevation = 0.dp,
         modifier = Modifier
             .testTag("bottom_nav_bar")
+            .border(1.dp, WarmStoneBorder, RoundedCornerShape(0.dp))
             .windowInsetsPadding(WindowInsets.navigationBars)
     ) {
+        NavigationBarItem(
+            selected = currentTab == AppTab.OPENING,
+            onClick = { onTabSelected(AppTab.OPENING) },
+            icon = {
+                Icon(
+                    imageVector = if (currentTab == AppTab.OPENING) Icons.Filled.MenuBook else Icons.Outlined.MenuBook,
+                    contentDescription = "Overview"
+                )
+            },
+            label = {
+                Text(
+                    text = "Welcome",
+                    fontFamily = FontFamily.Serif,
+                    fontSize = 11.sp
+                )
+            },
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = TerracottaAccent,
+                selectedTextColor = TerracottaAccent,
+                unselectedIconColor = CharcoalMuted,
+                unselectedTextColor = CharcoalMuted,
+                indicatorColor = TerracottaSoft
+            ),
+            modifier = Modifier.testTag("nav_item_opening")
+        )
+
+        NavigationBarItem(
+            selected = currentTab == AppTab.CONNECT,
+            onClick = { onTabSelected(AppTab.CONNECT) },
+            icon = {
+                Icon(
+                    imageVector = if (currentTab == AppTab.CONNECT) Icons.Filled.Link else Icons.Outlined.Link,
+                    contentDescription = "Connect"
+                )
+            },
+            label = {
+                Text(
+                    text = "Connect",
+                    fontFamily = FontFamily.Serif,
+                    fontSize = 11.sp
+                )
+            },
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = TerracottaAccent,
+                selectedTextColor = TerracottaAccent,
+                unselectedIconColor = CharcoalMuted,
+                unselectedTextColor = CharcoalMuted,
+                indicatorColor = TerracottaSoft
+            ),
+            modifier = Modifier.testTag("nav_item_connect")
+        )
+
         NavigationBarItem(
             selected = currentTab == AppTab.CHAT,
             onClick = { onTabSelected(AppTab.CHAT) },
             icon = {
                 Icon(
                     imageVector = if (currentTab == AppTab.CHAT) Icons.Filled.ChatBubble else Icons.Outlined.ChatBubbleOutline,
-                    contentDescription = "Agent Chat"
+                    contentDescription = "Conversation"
                 )
             },
-            label = { Text("Agent Chat") },
+            label = {
+                Text(
+                    text = "Conversation",
+                    fontFamily = FontFamily.Serif,
+                    fontSize = 11.sp
+                )
+            },
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = DarkGreen,
-                selectedTextColor = DarkGreen,
-                indicatorColor = LightSage
+                selectedIconColor = TerracottaAccent,
+                selectedTextColor = TerracottaAccent,
+                unselectedIconColor = CharcoalMuted,
+                unselectedTextColor = CharcoalMuted,
+                indicatorColor = TerracottaSoft
             ),
             modifier = Modifier.testTag("nav_item_chat")
         )
@@ -205,11 +291,19 @@ fun AegisBottomNavigationBar(
                     contentDescription = "Automation Hub"
                 )
             },
-            label = { Text("Automation") },
+            label = {
+                Text(
+                    text = "Hub",
+                    fontFamily = FontFamily.Serif,
+                    fontSize = 11.sp
+                )
+            },
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = DarkGreen,
-                selectedTextColor = DarkGreen,
-                indicatorColor = LightSage
+                selectedIconColor = TerracottaAccent,
+                selectedTextColor = TerracottaAccent,
+                unselectedIconColor = CharcoalMuted,
+                unselectedTextColor = CharcoalMuted,
+                indicatorColor = TerracottaSoft
             ),
             modifier = Modifier.testTag("nav_item_hub")
         )
@@ -223,31 +317,21 @@ fun AegisBottomNavigationBar(
                     contentDescription = "Activity Logs"
                 )
             },
-            label = { Text("Logs") },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = DarkGreen,
-                selectedTextColor = DarkGreen,
-                indicatorColor = LightSage
-            ),
-            modifier = Modifier.testTag("nav_item_logs")
-        )
-
-        NavigationBarItem(
-            selected = currentTab == AppTab.SETUP,
-            onClick = { onTabSelected(AppTab.SETUP) },
-            icon = {
-                Icon(
-                    imageVector = if (currentTab == AppTab.SETUP) Icons.Filled.Tune else Icons.Outlined.Tune,
-                    contentDescription = "Connection Setup"
+            label = {
+                Text(
+                    text = "Logs",
+                    fontFamily = FontFamily.Serif,
+                    fontSize = 11.sp
                 )
             },
-            label = { Text("Setup") },
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = DarkGreen,
-                selectedTextColor = DarkGreen,
-                indicatorColor = LightSage
+                selectedIconColor = TerracottaAccent,
+                selectedTextColor = TerracottaAccent,
+                unselectedIconColor = CharcoalMuted,
+                unselectedTextColor = CharcoalMuted,
+                indicatorColor = TerracottaSoft
             ),
-            modifier = Modifier.testTag("nav_item_setup")
+            modifier = Modifier.testTag("nav_item_logs")
         )
     }
 }
@@ -263,8 +347,9 @@ fun LiveExecutionBanner(
         exit = fadeOut() + shrinkVertically()
     ) {
         Surface(
-            color = DarkSurfaceVariant,
+            color = MutedBeigeCard,
             shape = RoundedCornerShape(12.dp),
+            border = androidx.compose.foundation.BorderStroke(1.dp, WarmStoneBorder),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -280,14 +365,15 @@ fun LiveExecutionBanner(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(18.dp),
+                        modifier = Modifier.size(16.dp),
                         strokeWidth = 2.dp,
-                        color = EmeraldAccent
+                        color = TerracottaAccent
                     )
                     Text(
                         text = statusText ?: "Agent executing automation...",
                         style = MaterialTheme.typography.titleMedium,
-                        color = Color.White,
+                        fontFamily = FontFamily.Serif,
+                        color = CharcoalPrimary,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -295,7 +381,7 @@ fun LiveExecutionBanner(
                 if (steps.isNotEmpty()) {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(4.dp),
-                        modifier = Modifier.padding(start = 28.dp)
+                        modifier = Modifier.padding(start = 26.dp)
                     ) {
                         steps.forEach { step ->
                             Row(
@@ -304,14 +390,15 @@ fun LiveExecutionBanner(
                             ) {
                                 Text(
                                     text = if (step.isDone) "✓" else if (step.isRunning) "⏳" else "○",
-                                    color = if (step.isDone) EmeraldAccent else if (step.isRunning) AmberAccent else Color.LightGray,
+                                    color = if (step.isDone) DarkSage else if (step.isRunning) DarkAmber else CharcoalLight,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
                                     text = step.title,
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = if (step.isDone || step.isRunning) Color.White else Color.Gray
+                                    fontFamily = FontFamily.Serif,
+                                    color = if (step.isDone || step.isRunning) CharcoalPrimary else CharcoalMuted
                                 )
                             }
                         }

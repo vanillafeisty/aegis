@@ -32,10 +32,13 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold(
                     topBar = {
-                        AegisTopBar(
-                            settings = settings,
-                            onSettingsClick = { viewModel.setTab(AppTab.SETUP) }
-                        )
+                        if (currentTab != AppTab.OPENING && currentTab != AppTab.CONNECT) {
+                            AegisTopBar(
+                                settings = settings,
+                                currentTab = currentTab,
+                                onNavigate = { tab -> viewModel.setTab(tab) }
+                            )
+                        }
                     },
                     bottomBar = {
                         AegisBottomNavigationBar(
@@ -58,10 +61,11 @@ class MainActivity : ComponentActivity() {
                             }
                         ) { tab ->
                             when (tab) {
+                                AppTab.OPENING -> OpeningScreen(viewModel = viewModel)
+                                AppTab.CONNECT -> ConnectionSetupScreen(viewModel = viewModel)
                                 AppTab.CHAT -> ChatScreen(viewModel = viewModel)
                                 AppTab.HUB -> AutomationHubScreen(viewModel = viewModel)
                                 AppTab.LOGS -> ActivityLogsScreen(viewModel = viewModel)
-                                AppTab.SETUP -> ConnectionSetupScreen(viewModel = viewModel)
                             }
                         }
                     }

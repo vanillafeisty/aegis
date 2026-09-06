@@ -13,10 +13,11 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 enum class AppTab {
+    OPENING,
+    CONNECT,
     CHAT,
     HUB,
-    LOGS,
-    SETUP
+    LOGS
 }
 
 enum class HubSection {
@@ -37,7 +38,7 @@ class AegisViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: AegisRepository
 
-    val currentTab = MutableStateFlow(AppTab.CHAT)
+    val currentTab = MutableStateFlow(AppTab.OPENING)
     val hubSection = MutableStateFlow(HubSection.POSTS)
 
     val chatMessages: StateFlow<List<ChatMessageEntity>>
@@ -260,10 +261,10 @@ class AegisViewModel(application: Application) : AndroidViewModel(application) {
 
                 AgentAction.SETUP -> {
                     repository.addAgentResponse(
-                        content = "🔑 **Credentials & Configuration Panel**\n\nSwitch to the **Setup** tab to manage your LinkedIn Session Cookie (`li_at`), Gmail App Password, and AI API keys.",
+                        content = "🔑 **Credentials & Configuration Panel**\n\nSwitch to the **Connect** tab to manage your LinkedIn Session Cookie (`li_at`), OAuth token, Gmail App Password, and Groq AI API keys.",
                         actionType = "setup"
                     )
-                    currentTab.value = AppTab.SETUP
+                    currentTab.value = AppTab.CONNECT
                 }
 
                 AgentAction.STATUS -> {
@@ -363,7 +364,11 @@ class AegisViewModel(application: Application) : AndroidViewModel(application) {
         liCookie: String,
         liToken: String,
         liClientId: String,
-        apiKey: String,
+        liClientSecret: String = "",
+        liRedirectUri: String = "http://localhost:8000/callback",
+        groqKey: String = "",
+        groqModel: String = "llama-3.3-70b-versatile",
+        zapierUrl: String = "https://mcp.zapier.com/api/v1/connect",
         smtpEmail: String,
         smtpPass: String
     ) {
@@ -374,12 +379,23 @@ class AegisViewModel(application: Application) : AndroidViewModel(application) {
                     linkedinSessionCookie = liCookie,
                     linkedinAccessToken = liToken,
                     linkedinClientId = liClientId,
-                    openaiApiKey = apiKey,
+                    linkedinClientSecret = liClientSecret,
+                    linkedinRedirectUri = liRedirectUri,
+                    groqApiKey = groqKey,
+                    groqModel = groqModel,
+                    zapierMcpUrl = zapierUrl,
                     smtpEmail = smtpEmail,
                     smtpPassword = smtpPass,
                     isConfigured = true
                 )
             )
+        }
+    }
+
+    fun testLinkedInConnection(onResult: (Boolean, String) -> Unit) {
+        viewModelScope.launch {
+            val res = repository.testLinkedInConnection()
+            onResult(res.first, res.second)
         }
     }
 

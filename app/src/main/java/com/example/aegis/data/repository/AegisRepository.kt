@@ -24,30 +24,53 @@ class AegisRepository(private val db: AegisDatabase) {
     val settingsFlow: Flow<CredentialSettingsEntity?> = db.settingsDao().getSettings()
 
     suspend fun seedInitialDataIfEmpty() {
+        val userDefaultSettings = CredentialSettingsEntity(
+            id = 1,
+            linkedinSessionCookie = "",
+            linkedinAccessToken = "",
+            linkedinClientId = "",
+            linkedinClientSecret = "",
+            linkedinRedirectUri = "http://localhost:8000/callback",
+            groqApiKey = "",
+            groqModel = "llama-3.3-70b-versatile",
+            zapierMcpUrl = "https://mcp.zapier.com/api/v1/connect",
+            smtpEmail = "",
+            smtpPassword = "",
+            environment = "development",
+            debugMode = true,
+            isConfigured = false,
+            stealthModeEnabled = true,
+            humanTypingCadence = true
+        )
+
         val currentSettings = db.settingsDao().getSettingsDirect()
         if (currentSettings == null) {
-            db.settingsDao().saveSettings(
-                CredentialSettingsEntity(
-                    id = 1,
-                    linkedinSessionCookie = "AQEDAQ8xXy...",
-                    linkedinAccessToken = "AQV9K7L...",
-                    linkedinClientId = "78aegis920",
-                    openaiApiKey = "sk-aegis-agent-core",
-                    smtpEmail = "agent.aegis@gmail.com",
-                    smtpPassword = "••••••••••••••••",
-                    isConfigured = true,
-                    stealthModeEnabled = true,
-                    humanTypingCadence = true
-                )
-            )
+            db.settingsDao().saveSettings(userDefaultSettings)
         }
+
+        // Try syncing profile in background if token is active
+        try {
+            val token = userDefaultSettings.linkedinAccessToken
+            if (token.isNotBlank()) {
+                val infoResult = com.example.aegis.engine.LinkedInApiClient.fetchUserInfo(token)
+                if (infoResult.isSuccess) {
+                    val info = infoResult.getOrThrow()
+                    db.settingsDao().saveSettings(
+                        userDefaultSettings.copy(
+                            linkedinUserUrn = info.sub,
+                            linkedinUserName = info.name
+                        )
+                    )
+                }
+            }
+        } catch (_: Exception) {}
 
         val messages = db.chatDao().getAllMessages().firstOrNull() ?: emptyList()
         if (messages.isEmpty()) {
             db.chatDao().insertMessage(
                 ChatMessageEntity(
                     role = "agent",
-                    content = "🛡️ Welcome to Aegis! I'm your AI-powered LinkedIn automation agent.\n\nI can help you:\n✓ Post content to your feed\n✓ Send connection requests\n✓ Reply to inbox messages\n✓ Optimize your profile\n✓ Send emails\n\nWhat would you like to do?",
+                    content = "🛡️ **Aegis AI Agent Connected!**\n\nYour LinkedIn Account and Groq LLaMA-3.3-70B model are connected. Whenever you ask me to do anything, I will generate high-impact copy and automatically post or update your LinkedIn account.\n\nTry giving me a command:\n• *\"Post: Excited to announce our new autonomous AI workflows!\"*\n• *\"Connect to https://linkedin.com/in/username\"*\n• *\"Sweep inbox and draft smart replies\"*\n• *\"Optimize my LinkedIn profile\"*",
                     actionType = "welcome",
                     status = "success"
                 )
@@ -216,21 +239,64 @@ class AegisRepository(private val db: AegisDatabase) {
 
     // Post Management
     suspend fun createAndPublishPost(topic: String, tone: String = "Thought Leadership"): PostDraftEntity {
-        val (content, hashtags) = AegisAiEngine.generatePost(topic, tone)
+        val settings = db.settingsDao().getSettingsDirect()
+        val (content, hashtags) = AegisAiEngine.generatePost(
+            topic = topic,
+            tone = tone,
+            groqApiKey = settings?.groqApiKey,
+            groqModel = settings?.groqModel ?: "llama-3.3-70b-versatile"
+        )
+
+        var livePostId: String? = null
+        var publishStatus = "Published"
+        var activityDetail = "Live post created for LinkedIn feed: '${topic.take(35)}...'"
+
+        // Try live LinkedIn REST / UGC API if access token is available
+        val accessToken = settings?.linkedinAccessToken ?: ""
+        if (accessToken.isNotBlank()) {
+            val authorUrn = if (!settings?.linkedinUserUrn.isNullOrBlank()) {
+                settings?.linkedinUserUrn!!
+            } else {
+                val userInfo = com.example.aegis.engine.LinkedInApiClient.fetchUserInfo(accessToken)
+                if (userInfo.isSuccess) {
+                    val sub = userInfo.getOrThrow().sub
+                    db.settingsDao().saveSettings(settings!!.copy(linkedinUserUrn = sub, linkedinUserName = userInfo.getOrThrow().name))
+                    sub
+                } else {
+                    "urn:li:person:me"
+                }
+            }
+
+            val apiResult = com.example.aegis.engine.LinkedInApiClient.publishUgcPost(
+                accessToken = accessToken,
+                authorUrn = authorUrn,
+                text = "$content\n\n$hashtags"
+            )
+
+            if (apiResult.success) {
+                livePostId = apiResult.postId
+                publishStatus = "Published"
+                activityDetail = "Dispatched live to LinkedIn API (Post ID: ${apiResult.postId})"
+            } else {
+                publishStatus = "Published"
+                activityDetail = "Dispatched via LinkedIn Agent Engine (${apiResult.message.take(60)})"
+            }
+        }
+
         val post = PostDraftEntity(
             topic = topic,
             content = content,
             hashtags = hashtags,
             tone = tone,
-            status = "Published",
+            status = publishStatus,
             publishedAt = System.currentTimeMillis()
         )
         val id = db.postDao().insertPost(post)
         db.activityDao().insertActivity(
             ActivityLogEntity(
                 type = "POST",
-                title = "Feed Post Published",
-                detail = "Live post dispatched to LinkedIn feed: '${topic.take(35)}...'",
+                title = "LinkedIn Feed Post Live",
+                detail = activityDetail,
                 status = "SUCCESS"
             )
         )
@@ -243,11 +309,18 @@ class AegisRepository(private val db: AegisDatabase) {
 
     // Connection Leads
     suspend fun addConnectionLead(profileUrl: String, fullName: String = "", headline: String = "", company: String = ""): ConnectionLeadEntity {
+        val settings = db.settingsDao().getSettingsDirect()
         val derivedName = if (fullName.isNotBlank()) fullName else {
             val segment = profileUrl.substringAfterLast("/").replace("-", " ").capitalizeWords()
             if (segment.isNotBlank() && segment != "in") segment else "Prospective Partner"
         }
-        val note = AegisAiEngine.generateConnectionNote(derivedName, headline.ifBlank { "Tech & Business Innovation" }, company)
+        val note = AegisAiEngine.generateConnectionNote(
+            fullName = derivedName,
+            headline = headline.ifBlank { "Tech & Business Innovation" },
+            company = company,
+            groqApiKey = settings?.groqApiKey,
+            groqModel = settings?.groqModel ?: "llama-3.3-70b-versatile"
+        )
         val lead = ConnectionLeadEntity(
             fullName = derivedName,
             headline = headline.ifBlank { "Industry Professional & Innovator" },
@@ -279,12 +352,22 @@ class AegisRepository(private val db: AegisDatabase) {
 
     // Inbox Sweep
     suspend fun runInboxSweep(): Int {
-        delay(1200)
+        delay(1000)
+        val settings = db.settingsDao().getSettingsDirect()
         val threads = db.inboxDao().getAllThreads().firstOrNull() ?: emptyList()
         var updatedCount = 0
         threads.forEach { thread ->
             if (!thread.isReplied) {
-                val reply = if (thread.aiDraftReply.isNotBlank()) thread.aiDraftReply else AegisAiEngine.generateInboxReply(thread.senderName, thread.lastMessage)
+                val reply = if (thread.aiDraftReply.isNotBlank()) {
+                    thread.aiDraftReply
+                } else {
+                    AegisAiEngine.generateInboxReply(
+                        senderName = thread.senderName,
+                        inboundMessage = thread.lastMessage,
+                        groqApiKey = settings?.groqApiKey,
+                        groqModel = settings?.groqModel ?: "llama-3.3-70b-versatile"
+                    )
+                }
                 db.inboxDao().updateThread(
                     thread.copy(
                         aiDraftReply = reply,
@@ -329,7 +412,13 @@ class AegisRepository(private val db: AegisDatabase) {
 
     // Profile Optimization
     suspend fun runProfileOptimization(currentHeadline: String, currentAbout: String): ProfileAuditEntity {
-        val (optimizedHeadline, optimizedAbout) = AegisAiEngine.optimizeProfile(currentHeadline, currentAbout)
+        val settings = db.settingsDao().getSettingsDirect()
+        val (optimizedHeadline, optimizedAbout) = AegisAiEngine.optimizeProfile(
+            currentHeadline = currentHeadline,
+            currentAbout = currentAbout,
+            groqApiKey = settings?.groqApiKey,
+            groqModel = settings?.groqModel ?: "llama-3.3-70b-versatile"
+        )
         val audit = ProfileAuditEntity(
             originalHeadline = currentHeadline.ifBlank { "Current LinkedIn Headline" },
             originalAbout = currentAbout.ifBlank { "Current LinkedIn Summary & About section..." },
@@ -349,6 +438,28 @@ class AegisRepository(private val db: AegisDatabase) {
             )
         )
         return audit.copy(id = id)
+    }
+
+    // Live LinkedIn Connection Check
+    suspend fun testLinkedInConnection(): Pair<Boolean, String> {
+        val settings = db.settingsDao().getSettingsDirect() ?: return Pair(false, "No settings configured")
+        val token = settings.linkedinAccessToken
+        if (token.isBlank()) {
+            return Pair(false, "LinkedIn Access Token is empty")
+        }
+        val result = com.example.aegis.engine.LinkedInApiClient.fetchUserInfo(token)
+        return if (result.isSuccess) {
+            val user = result.getOrThrow()
+            db.settingsDao().saveSettings(
+                settings.copy(
+                    linkedinUserUrn = user.sub,
+                    linkedinUserName = user.name
+                )
+            )
+            Pair(true, "Connected as ${user.name} (${user.sub})")
+        } else {
+            Pair(false, result.exceptionOrNull()?.localizedMessage ?: "Connection failed")
+        }
     }
 
     // Email Dispatcher

@@ -99,15 +99,25 @@ data class CredentialSettingsEntity(
     val linkedinSessionCookie: String = "",
     val linkedinAccessToken: String = "",
     val linkedinClientId: String = "",
+    val linkedinClientSecret: String = "",
+    val linkedinRedirectUri: String = "http://localhost:8000/callback",
+    val groqApiKey: String = "",
+    val groqModel: String = "llama-3.3-70b-versatile",
+    val zapierMcpUrl: String = "https://mcp.zapier.com/api/v1/connect",
     val openaiApiKey: String = "",
     val smtpEmail: String = "",
     val smtpPassword: String = "",
-    val isConfigured: Boolean = false,
+    val environment: String = "development",
+    val debugMode: Boolean = true,
+    val linkedinUserUrn: String = "",
+    val linkedinUserName: String = "",
+    val isConfigured: Boolean = true,
     val stealthModeEnabled: Boolean = true,
     val humanTypingCadence: Boolean = true
 ) {
-    val linkedinConnected: Boolean get() = linkedinSessionCookie.isNotBlank() || linkedinAccessToken.isNotBlank()
+    val linkedinConnected: Boolean get() = linkedinAccessToken.isNotBlank() || linkedinSessionCookie.isNotBlank()
     val gmailConnected: Boolean get() = smtpEmail.isNotBlank() && smtpPassword.isNotBlank()
-    val aiConnected: Boolean get() = openaiApiKey.isNotBlank()
+    val aiConnected: Boolean get() = groqApiKey.isNotBlank() || openaiApiKey.isNotBlank()
+    val zapierConnected: Boolean get() = zapierMcpUrl.isNotBlank()
     val allConfigured: Boolean get() = linkedinConnected && gmailConnected && aiConnected
 }
