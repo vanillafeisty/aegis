@@ -28,12 +28,12 @@
 
 ```bash
 # 1. Backend Setup
-cd aegis-fixed/backend
+cd backend
 python -m pip install -r requirements.txt
 python app.py
 
 # 2. Frontend Setup (new terminal)
-cd aegis-fixed/frontend
+cd frontend
 npm install
 npm run dev
 
