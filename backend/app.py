@@ -38,6 +38,7 @@ try:
     import ai_agent_inbox
     import agent_cold_message
     import agent_dm
+    import agent_command
 except ImportError as e:
     logger.warning(f"Agent import warning: {e}")
 
@@ -106,6 +107,9 @@ class DMRequest(BaseModel):
     name: str
     message: str
 
+class CommandRequest(BaseModel):
+    command: str
+
 class HealthResponse(BaseModel):
     status: str
     version: str
@@ -160,6 +164,7 @@ async def root():
         "endpoints": [
             "GET /health",
             "GET /auth/status",
+            "POST /agents/command",
             "POST /agents/post",
             "POST /agents/post-trending",
             "POST /agents/email",
@@ -403,22 +408,14 @@ async def agent_post_content(request: PostRequest):
         logger.error(f"Post error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/agents/post-trending")
-async def agent_post_trending(request: TrendingPostRequest):
-    """Generate a post about a trending topic using Groq and post to LinkedIn"""
-    try:
-        if not os.getenv('GROQ_API_KEY'):
-            raise HTTPException(status_code=400, detail="Groq AI not configured")
-        if not os.getenv('LINKEDIN_SESSION_COOKIE'):
-            raise HTTPException(status_code=400, detail="LinkedIn not configured")
-            
-        # Call Groq to generate post text
-        from groq import Groq
-        client = Groq(api_key=os.getenv('GROQ_API_KEY'))
-        model = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
-        
-        prompt = f"""Create a highly engaging, professional LinkedIn post about the following trending topic:
-Trending Topic: {request.topic}
+async def _generate_trending_post_text(topic: str) -> str:
+    """Ask Groq to draft a LinkedIn post about a topic. Shared by the REST endpoint and the command router."""
+    from groq import Groq
+    client = Groq(api_key=os.getenv('GROQ_API_KEY'))
+    model = os.getenv('GROQ_MODEL', 'openai/gpt-oss-120b')
+
+    prompt = f"""Create a highly engaging, professional LinkedIn post about the following trending topic:
+Trending Topic: {topic}
 
 Requirements:
 - Add a strong opening hook.
@@ -429,20 +426,33 @@ Requirements:
 - Do NOT include markdown styling like double asterisks (**) or headings since LinkedIn doesn't support them.
 - Output ONLY the final post text, nothing else."""
 
-        logger.info(f"Generating trending post for topic: {request.topic}")
-        response = client.chat.completions.create(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=500,
-            temperature=0.7
-        )
-        
-        post_content = response.choices[0].message.content.strip()
-        if post_content.startswith('"') and post_content.endswith('"'):
-            post_content = post_content[1:-1]
-        
+    logger.info(f"Generating trending post for topic: {topic}")
+    response = client.chat.completions.create(
+        model=model,
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=900,
+        temperature=0.7,
+        reasoning_effort="low"
+    )
+
+    post_content = response.choices[0].message.content.strip()
+    if post_content.startswith('"') and post_content.endswith('"'):
+        post_content = post_content[1:-1]
+    return post_content
+
+
+@app.post("/agents/post-trending")
+async def agent_post_trending(request: TrendingPostRequest):
+    """Generate a post about a trending topic using Groq and post to LinkedIn"""
+    try:
+        if not os.getenv('GROQ_API_KEY'):
+            raise HTTPException(status_code=400, detail="Groq AI not configured")
+        if not os.getenv('LINKEDIN_SESSION_COOKIE'):
+            raise HTTPException(status_code=400, detail="LinkedIn not configured")
+
+        post_content = await _generate_trending_post_text(request.topic)
         logger.info(f"Generated text: {post_content[:50]}...")
-        
+
         # Post to LinkedIn
         result = await agent_post.post_to_linkedin(post_content, request.image_url)
         return {"status": "success", "result": result, "generated_content": post_content}
@@ -552,6 +562,138 @@ async def agent_send_dm(request: DMRequest):
     except Exception as e:
         logger.error(f"Send DM error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== NATURAL-LANGUAGE COMMAND ROUTER ====================
+
+def _has_linkedin_auth() -> bool:
+    has_oauth = OAUTH_AVAILABLE and bool(linkedin_oauth.get_access_token())
+    has_cookie = bool(os.getenv('LINKEDIN_SESSION_COOKIE'))
+    return has_oauth or has_cookie
+
+
+@app.post("/agents/command")
+async def agent_command_route(request: CommandRequest):
+    """
+    Single entry point for free-text instructions ("post about X", "connect with
+    recruiters hiring for Y in Z", "email a@b.com about..."). Classifies the
+    command with Groq, then dispatches to the matching existing agent — never
+    fabricating a recipient email, profile URL, or name that wasn't provided.
+    """
+    command = request.command
+    try:
+        parsed = await agent_command.interpret_command(command)
+    except Exception as e:
+        logger.error(f"Command interpretation failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+    intent = parsed["intent"]
+    params = parsed["params"]
+    missing = parsed["missing"]
+    note = parsed.get("clarifying_question") or ""
+
+    if intent == "unknown" or missing:
+        return {
+            "status": "needs_info",
+            "intent": intent,
+            "missing": missing,
+            "message": note or "I couldn't fully understand that — could you give me a bit more detail?",
+        }
+
+    try:
+        if intent == "post":
+            if not os.getenv('LINKEDIN_SESSION_COOKIE') and not (OAUTH_AVAILABLE and linkedin_oauth.get_access_token()):
+                return {"status": "error", "intent": intent, "message": "LinkedIn not configured. Connect via OAuth or set LINKEDIN_SESSION_COOKIE."}
+            result = await agent_post.post_to_linkedin(params["content"], params.get("image_url"))
+            return {"status": "success", "intent": intent, "message": "Post published to LinkedIn.", "result": result, "note": note}
+
+        elif intent == "post_trending":
+            if not os.getenv('GROQ_API_KEY'):
+                return {"status": "error", "intent": intent, "message": "Groq AI not configured."}
+            if not os.getenv('LINKEDIN_SESSION_COOKIE'):
+                return {"status": "error", "intent": intent, "message": "LinkedIn not configured."}
+            post_content = await _generate_trending_post_text(params["topic"])
+            result = await agent_post.post_to_linkedin(post_content, params.get("image_url"))
+            return {
+                "status": "success",
+                "intent": intent,
+                "message": "Wrote and published a post about: " + params["topic"],
+                "result": result,
+                "generated_content": post_content,
+                "note": note,
+            }
+
+        elif intent == "connect":
+            if not _has_linkedin_auth():
+                return {"status": "error", "intent": intent, "message": "LinkedIn not configured. Connect via OAuth on the dashboard."}
+            result = await agent_connect.send_connection(params["profile_url"], params.get("message"))
+            return {"status": "success", "intent": intent, "message": f"Connection request sent to {params['profile_url']}.", "result": result, "note": note}
+
+        elif intent == "cold_outreach":
+            if not _has_linkedin_auth():
+                return {"status": "error", "intent": intent, "message": "LinkedIn not configured. Connect via OAuth on the dashboard."}
+            limit = params.get("limit") or 3
+            try:
+                limit = int(limit)
+            except (TypeError, ValueError):
+                limit = 3
+            result = await agent_cold_message.send_cold_messages(
+                job_description=params["job_description"],
+                area=params["area"],
+                custom_message=params.get("custom_message"),
+                limit=limit,
+            )
+            return {
+                "status": "success",
+                "intent": intent,
+                "message": f"Ran outreach campaign for \"{params['job_description']}\" in \"{params['area']}\".",
+                "result": result,
+                "note": note,
+            }
+
+        elif intent == "dm":
+            if not os.getenv('LINKEDIN_SESSION_COOKIE'):
+                return {"status": "error", "intent": intent, "message": "LinkedIn session cookie not configured."}
+            result = await agent_dm.send_dm(name=params["name"], message=params["message"])
+            return {"status": "success", "intent": intent, "message": f"Message sent to {params['name']}.", "result": result, "note": note}
+
+        elif intent == "email":
+            if not os.getenv('SMTP_EMAIL'):
+                return {"status": "error", "intent": intent, "message": "Email (SMTP) not configured."}
+            subject = params.get("subject") or ""
+            body = params.get("body") or ""
+            if not subject.strip() or not body.strip():
+                drafted = await agent_command.draft_email(command)
+                subject = subject.strip() or drafted["subject"]
+                body = body.strip() or drafted["body"]
+            result = await agent_email.send_email(params["recipient_email"], subject, body)
+            return {
+                "status": "success",
+                "intent": intent,
+                "message": f"Email sent to {params['recipient_email']}.",
+                "result": result,
+                "subject": subject,
+                "body": body,
+                "note": note,
+            }
+
+        elif intent == "profile_optimize":
+            if not os.getenv('GROQ_API_KEY'):
+                return {"status": "error", "intent": intent, "message": "Groq AI not configured."}
+            result = await agent_profile_tweak.optimize_profile()
+            return {"status": "success", "intent": intent, "message": "Profile optimization suggestions generated.", "result": result, "note": note}
+
+        elif intent == "inbox":
+            if not _has_linkedin_auth():
+                return {"status": "error", "intent": intent, "message": "LinkedIn not configured. Connect via OAuth on the dashboard."}
+            result = await ai_agent_inbox.process_inbox()
+            return {"status": "success", "intent": intent, "message": "Inbox scanned and replied to.", "result": result, "note": note}
+
+        else:
+            return {"status": "needs_info", "intent": "unknown", "missing": [], "message": "I'm not sure what to do with that yet."}
+
+    except Exception as e:
+        logger.error(f"Command dispatch error ({intent}): {e}")
+        return {"status": "error", "intent": intent, "message": str(e)}
 
 # ==================== MCP SSE STREAMING TRANSPORT ====================
 

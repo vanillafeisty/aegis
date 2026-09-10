@@ -29,7 +29,7 @@ async def process_inbox() -> Dict[str, Any]:
     Reads the latest conversations, generates a reply via Groq, and sends it.
     """
     groq_key = os.getenv('GROQ_API_KEY')
-    model = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
+    model = os.getenv('GROQ_MODEL', 'openai/gpt-oss-120b')
     session_cookie = os.getenv('LINKEDIN_SESSION_COOKIE')
 
     if not session_cookie:
@@ -127,8 +127,9 @@ async def process_inbox() -> Dict[str, Any]:
 
 Keep it under 280 characters. Be helpful and professional."""
                         }],
-                        max_tokens=100,
-                        temperature=0.7
+                        max_tokens=250,
+                        temperature=0.7,
+                        reasoning_effort="low"
                     )
 
                     reply = response.choices[0].message.content.strip()
