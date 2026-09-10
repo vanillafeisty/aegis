@@ -38,14 +38,14 @@ export default function AegisLogo({
       {/* Logo Emblem Container */}
       <div
         className={`relative flex items-center justify-center shrink-0 transition-transform duration-300 hover:scale-105 ${
-          variant === 'badge' ? 'p-1.5 rounded-2xl bg-[#0b1728]/80 border border-cyan-500/30' : ''
+          variant === 'badge' ? 'p-1.5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm' : ''
         }`}
         style={{ width: px, height: px }}
       >
         {/* Ambient Halo Glow */}
         {withGlow && (
           <div
-            className="absolute inset-0 rounded-full bg-cyan-400/20 blur-md pointer-events-none animate-pulse-slow"
+            className="absolute inset-0 rounded-full bg-indigo-400/20 blur-md pointer-events-none animate-pulse-slow"
             style={{ transform: 'scale(1.2)' }}
           />
         )}
@@ -227,17 +227,17 @@ export default function AegisLogo({
         <div className="flex flex-col justify-center">
           <div className="flex items-center gap-2">
             <span
-              className={`font-extrabold tracking-[0.2em] uppercase font-sans ${text} bg-gradient-to-r from-white via-cyan-100 to-cyan-400 bg-clip-text text-transparent`}
+              className={`font-extrabold tracking-[0.2em] uppercase font-sans ${text} bg-gradient-to-r from-slate-900 via-indigo-700 to-indigo-500 bg-clip-text text-transparent`}
               style={{ letterSpacing: '0.18em' }}
             >
               AEGIS
             </span>
-            <span className="px-1.5 py-0.5 text-[9px] font-mono font-bold tracking-wider rounded-md bg-cyan-500/15 text-cyan-300 border border-cyan-500/35">
+            <span className="px-1.5 py-0.5 text-[9px] font-mono font-bold tracking-wider rounded-md bg-indigo-50 text-indigo-600 border border-indigo-200">
               AI
             </span>
           </div>
           {size !== 'xs' && size !== 'sm' && (
-            <span className="text-[10px] font-mono tracking-wider text-cyan-400/80 -mt-0.5">
+            <span className="text-[10px] font-mono tracking-wider text-indigo-500/80 -mt-0.5">
               AUTONOMOUS OUTREACH
             </span>
           )}

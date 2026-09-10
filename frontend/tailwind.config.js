@@ -9,12 +9,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        background: '#090d16',
-        card: '#0f172a',
-        'card-hover': '#162238',
-        border: 'rgba(255, 255, 255, 0.08)',
+        background: '#f8fafc',
+        card: '#ffffff',
+        'card-hover': '#f8fafc',
+        border: '#e2e8f0',
         accent: {
-          cyan: '#00d9ff',
+          indigo: '#4f46e5',
           blue: '#3b82f6',
           purple: '#8b5cf6',
           pink: '#ec4899',
@@ -29,14 +29,7 @@ module.exports = {
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'glow-pulse': 'glowPulse 2s ease-in-out infinite alternate',
       },
-      keyframes: {
-        glowPulse: {
-          '0%': { boxShadow: '0 0 15px rgba(0, 217, 255, 0.2)' },
-          '100%': { boxShadow: '0 0 25px rgba(0, 217, 255, 0.5)' },
-        }
-      }
     },
   },
   plugins: [],

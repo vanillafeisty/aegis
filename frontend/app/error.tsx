@@ -8,11 +8,11 @@ export default function Error({
   reset: () => void;
 }) {
   return (
-    <div className="bg-[#07090e] text-white flex flex-col items-center justify-center min-h-screen">
+    <div className="bg-[#f8fafc] text-slate-900 flex flex-col items-center justify-center min-h-screen">
       <h2 className="text-xl font-bold mb-4">Something went wrong</h2>
       <button
         onClick={() => reset()}
-        className="px-4 py-2 bg-cyan-600 rounded text-sm hover:bg-cyan-500 transition"
+        className="px-4 py-2 bg-indigo-600 rounded text-sm text-white hover:bg-indigo-700 transition"
       >
         Try again
       </button>

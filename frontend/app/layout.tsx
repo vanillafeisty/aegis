@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'AEGIS AI v2.0 | Neural LinkedIn & Outreach Intelligence Agent',
+  title: 'AEGIS AI v2.0 | LinkedIn & Outreach Automation Agent',
   description: 'Autonomous AI-powered LinkedIn outreach, email automation, profile optimization, and RFC 6202 SSE event orchestration.',
   icons: {
     icon: '/icon.png',
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#060b14',
+  themeColor: '#f8fafc',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -24,8 +24,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className="bg-[#07090e] text-slate-100 min-h-screen antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
+    <html lang="en">
+      <body className="bg-[#f8fafc] text-slate-900 min-h-screen antialiased selection:bg-indigo-100 selection:text-indigo-900">
         {children}
       </body>
     </html>

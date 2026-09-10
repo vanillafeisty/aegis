@@ -452,50 +452,50 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#060b14] text-slate-100 flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col selection:bg-indigo-100 selection:text-indigo-900">
       {/* Top Banner & Header */}
-      <header className="sticky top-0 z-40 border-b border-cyan-500/15 bg-[#060b14]/90 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-3.5">
             <AegisLogo size="md" variant="badge" withGlow={true} useImage={true} />
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-xl font-black tracking-[0.16em] aegis-gradient-text uppercase font-sans">
+                <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-slate-900 to-indigo-600 bg-clip-text text-transparent">
                   AEGIS AI
                 </h1>
-                <span className="px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider rounded-md bg-cyan-500/15 text-cyan-300 border border-cyan-500/35 shadow-sm shadow-cyan-500/10">
+                <span className="px-2 py-0.5 text-[10px] font-mono font-semibold tracking-wide rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200">
                   v2.0 PRO
                 </span>
               </div>
-              <p className="text-xs text-slate-400 font-medium">Neural LinkedIn & Multi-Channel AI Agent</p>
+              <p className="text-xs text-slate-500 font-medium">Autonomous LinkedIn & Multi-Channel AI Agent</p>
             </div>
           </div>
 
           {/* Quick System Indicators */}
           <div className="hidden md:flex items-center gap-4">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900/80 border border-white/[0.06] text-xs">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs">
               <span
                 className={`w-2 h-2 rounded-full ${
-                  healthStatus?.status === 'healthy' ? 'bg-emerald-400 status-dot-active' : 'bg-rose-500'
+                  healthStatus?.status === 'healthy' ? 'bg-emerald-500 status-dot-active' : 'bg-rose-500'
                 }`}
               />
-              <span className="text-slate-400 font-medium">Backend:</span>
-              <span className={healthStatus?.status === 'healthy' ? 'text-emerald-400 font-semibold' : 'text-rose-400 font-semibold'}>
+              <span className="text-slate-500 font-medium">Backend:</span>
+              <span className={healthStatus?.status === 'healthy' ? 'text-emerald-600 font-semibold' : 'text-rose-600 font-semibold'}>
                 {healthStatus?.status === 'healthy' ? 'Online' : 'Offline'}
               </span>
             </div>
 
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900/80 border border-white/[0.06] text-xs">
-              <Radio className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-              <span className="text-slate-400 font-medium">MCP SSE:</span>
-              <span className="text-cyan-400 font-semibold">Active</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs">
+              <Radio className="w-3.5 h-3.5 text-indigo-500 animate-pulse" />
+              <span className="text-slate-500 font-medium">MCP SSE:</span>
+              <span className="text-indigo-600 font-semibold">Active</span>
             </div>
 
             <a
               href={`${API_URL}/docs`}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/[0.08] text-xs font-medium transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200 text-xs font-medium transition"
             >
               <span>API Docs</span>
               <ExternalLink className="w-3 h-3" />
@@ -507,7 +507,7 @@ export default function Home() {
                 checkCredentials();
               }}
               title="Refresh status"
-              className="p-2 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-cyan-400 border border-white/[0.08] transition"
+              className="p-2 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-indigo-600 border border-slate-200 transition"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
             </button>
@@ -533,11 +533,11 @@ export default function Home() {
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all whitespace-nowrap ${
                     isActive
-                      ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm shadow-cyan-500/10'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.03] border border-transparent'
+                      ? 'bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-sm'
+                      : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50 border border-transparent'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
                   {tab.label}
                 </button>
               );
@@ -550,20 +550,20 @@ export default function Home() {
       {notification && (
         <div className="fixed bottom-6 right-6 z-50 max-w-md animate-in slide-in-from-bottom-5 fade-in duration-200">
           <div
-            className={`flex items-start gap-3 p-4 rounded-xl shadow-2xl border backdrop-blur-xl ${
+            className={`flex items-start gap-3 p-4 rounded-xl shadow-xl border backdrop-blur-xl ${
               notification.type === 'success'
-                ? 'bg-emerald-950/90 border-emerald-500/40 text-emerald-100 shadow-emerald-950/50'
+                ? 'bg-emerald-50/95 border-emerald-200 text-emerald-800'
                 : notification.type === 'warning'
-                ? 'bg-amber-950/90 border-amber-500/40 text-amber-100 shadow-amber-950/50'
+                ? 'bg-amber-50/95 border-amber-200 text-amber-800'
                 : notification.type === 'error'
-                ? 'bg-rose-950/90 border-rose-500/40 text-rose-100 shadow-rose-950/50'
-                : 'bg-slate-900/90 border-cyan-500/40 text-slate-100 shadow-slate-950/50'
+                ? 'bg-rose-50/95 border-rose-200 text-rose-800'
+                : 'bg-white/95 border-indigo-200 text-slate-800'
             }`}
           >
-            {notification.type === 'success' && <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />}
-            {notification.type === 'warning' && <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />}
-            {notification.type === 'error' && <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />}
-            {notification.type === 'info' && <Radio className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />}
+            {notification.type === 'success' && <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />}
+            {notification.type === 'warning' && <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />}
+            {notification.type === 'error' && <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />}
+            {notification.type === 'info' && <Radio className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />}
             <div className="text-xs font-medium leading-relaxed">{notification.text}</div>
           </div>
         </div>
@@ -575,33 +575,31 @@ export default function Home() {
         {activeTab === 'dashboard' && (
           <div className="space-y-6 animate-in fade-in duration-300">
             {/* Aegis Brand Hero Banner */}
-            <div className="relative overflow-hidden rounded-3xl p-6 sm:p-7 bg-gradient-to-br from-[#091526] via-[#0c1f38] to-[#07111e] border border-cyan-500/25 shadow-2xl shadow-cyan-950/40">
-              {/* Glowing Background Radial Blobs */}
-              <div className="absolute top-0 right-0 -mt-10 -mr-10 w-80 h-80 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none" />
-              <div className="absolute bottom-0 left-1/4 w-72 h-72 rounded-full bg-blue-600/10 blur-3xl pointer-events-none" />
+            <div className="relative overflow-hidden rounded-3xl p-6 sm:p-7 bg-gradient-to-br from-indigo-50 via-white to-violet-50 border border-indigo-100 shadow-sm">
+              {/* Soft Background Blobs */}
+              <div className="absolute top-0 right-0 -mt-10 -mr-10 w-80 h-80 rounded-full bg-indigo-200/25 blur-3xl pointer-events-none" />
+              <div className="absolute bottom-0 left-1/4 w-72 h-72 rounded-full bg-violet-200/25 blur-3xl pointer-events-none" />
 
               <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
-                  <div className="relative p-2.5 rounded-2xl bg-[#06101e]/85 border border-cyan-500/35 shadow-xl shadow-cyan-500/20 shrink-0">
-                    <AegisLogo size="lg" variant="badge" withGlow={true} useImage={true} />
-                  </div>
+                  <AegisLogo size="lg" variant="badge" withGlow={true} useImage={true} />
                   <div className="space-y-2">
                     <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                      <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-cyan-400 neural-node-active" />
-                        NEURAL AGENT ACTIVE
+                      <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-indigo-500 status-dot-active" />
+                        AGENT ACTIVE
                       </span>
-                      <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/30">
+                      <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold bg-blue-50 text-blue-700 border border-blue-200">
                         GROQ LLAMA 3.3
                       </span>
-                      <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                      <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                         RFC 6202 SSE READY
                       </span>
                     </div>
-                    <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-                      Next-Gen <span className="aegis-gradient-text">Autonomous Outreach</span> Engine
+                    <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
+                      Next-Gen <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">Autonomous Outreach</span> Engine
                     </h2>
-                    <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
+                    <p className="text-xs sm:text-sm text-slate-600 max-w-2xl leading-relaxed">
                       AI-driven candidate scouting, automated multi-channel messaging, and real-time streaming agent workflows configured with intelligent rate limiting.
                     </p>
                   </div>
@@ -611,16 +609,16 @@ export default function Home() {
                 <div className="flex flex-row md:flex-col gap-2.5 shrink-0 w-full sm:w-auto">
                   <button
                     onClick={() => setActiveTab('outreach')}
-                    className="flex-1 sm:flex-initial glow-btn-primary px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2"
+                    className="flex-1 sm:flex-initial btn-primary px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2"
                   >
                     <Users className="w-4 h-4" />
                     <span>Start Recruiter Scouting</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('zapier')}
-                    className="flex-1 sm:flex-initial glow-btn-secondary px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2"
+                    className="flex-1 sm:flex-initial btn-secondary px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2"
                   >
-                    <Zap className="w-4 h-4 text-cyan-400" />
+                    <Zap className="w-4 h-4 text-indigo-600" />
                     <span>Stream SSE Pipeline</span>
                   </button>
                 </div>
@@ -630,75 +628,75 @@ export default function Home() {
             {/* Top KPI Cards Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Card 1: AI Engine */}
-              <div className="glass-panel-interactive rounded-2xl p-4.5 relative overflow-hidden">
+              <div className="surface-card-interactive rounded-2xl p-4.5 relative overflow-hidden">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">AI Inference Engine</span>
-                  <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
-                    <Sparkles className="w-4 h-4 text-purple-400" />
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">AI Inference Engine</span>
+                  <div className="w-8 h-8 rounded-lg bg-purple-50 border border-purple-200 flex items-center justify-center">
+                    <Sparkles className="w-4 h-4 text-purple-600" />
                   </div>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-lg font-bold text-white">Groq Llama 3.3</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold">Active</span>
+                  <span className="text-lg font-bold text-slate-900">Groq Llama 3.3</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-semibold">Active</span>
                 </div>
-                <p className="text-xs text-slate-400 mt-1">High-speed cold message & post generation</p>
+                <p className="text-xs text-slate-500 mt-1">High-speed cold message & post generation</p>
               </div>
 
               {/* Card 2: LinkedIn Status */}
-              <div className="glass-panel-interactive rounded-2xl p-4.5 relative overflow-hidden">
+              <div className="surface-card-interactive rounded-2xl p-4.5 relative overflow-hidden">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">LinkedIn Bridge</span>
-                  <div className="w-8 h-8 rounded-lg bg-[#0077b5]/10 border border-[#0077b5]/30 flex items-center justify-center">
-                    <LinkedInIcon className="w-4 h-4 text-[#00a0dc]" />
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">LinkedIn Bridge</span>
+                  <div className="w-8 h-8 rounded-lg bg-sky-50 border border-sky-200 flex items-center justify-center">
+                    <LinkedInIcon className="w-4 h-4 text-[#0077b5]" />
                   </div>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-lg font-bold text-white">
+                  <span className="text-lg font-bold text-slate-900">
                     {credentialStatus?.linkedin?.connected ? 'Connected' : 'Hybrid Auth'}
                   </span>
                   <span
                     className={`text-[10px] px-1.5 py-0.5 rounded font-semibold ${
                       credentialStatus?.linkedin?.connected
-                        ? 'bg-emerald-500/20 text-emerald-400'
-                        : 'bg-amber-500/20 text-amber-400'
+                        ? 'bg-emerald-50 text-emerald-700'
+                        : 'bg-amber-50 text-amber-700'
                     }`}
                   >
                     {credentialStatus?.linkedin?.connected ? 'OAuth 2.0' : 'Cookie Mode'}
                   </span>
                 </div>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   {credentialStatus?.linkedin?.profile_name || 'Autonomous dispatch active'}
                 </p>
               </div>
 
               {/* Card 3: Outreach Pipeline */}
-              <div className="glass-panel-interactive rounded-2xl p-4.5 relative overflow-hidden">
+              <div className="surface-card-interactive rounded-2xl p-4.5 relative overflow-hidden">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Outreach Speed</span>
-                  <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
-                    <TrendingUp className="w-4 h-4 text-cyan-400" />
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Outreach Speed</span>
+                  <div className="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-200 flex items-center justify-center">
+                    <TrendingUp className="w-4 h-4 text-indigo-600" />
                   </div>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-lg font-bold text-white">Auto-Personalized</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-semibold">100% AI</span>
+                  <span className="text-lg font-bold text-slate-900">Auto-Personalized</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 font-semibold">100% AI</span>
                 </div>
-                <p className="text-xs text-slate-400 mt-1">Dynamic recruiter targeting by role & city</p>
+                <p className="text-xs text-slate-500 mt-1">Dynamic recruiter targeting by role & city</p>
               </div>
 
               {/* Card 4: Protocol Transport */}
-              <div className="glass-panel-interactive rounded-2xl p-4.5 relative overflow-hidden">
+              <div className="surface-card-interactive rounded-2xl p-4.5 relative overflow-hidden">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">MCP Protocol</span>
-                  <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                    <Zap className="w-4 h-4 text-blue-400" />
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">MCP Protocol</span>
+                  <div className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center">
+                    <Zap className="w-4 h-4 text-blue-600" />
                   </div>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-lg font-bold text-white">RFC 6202 SSE</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold">Ready</span>
+                  <span className="text-lg font-bold text-slate-900">RFC 6202 SSE</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-semibold">Ready</span>
                 </div>
-                <p className="text-xs text-slate-400 mt-1">Real-time event streaming & tools catalog</p>
+                <p className="text-xs text-slate-500 mt-1">Real-time event streaming & tools catalog</p>
               </div>
             </div>
 
@@ -707,26 +705,26 @@ export default function Home() {
               {/* Left Column (2 spans): LinkedIn Integration & Cookie Health Manager */}
               <div className="lg:col-span-2 space-y-6">
                 {/* LinkedIn Authentication Card */}
-                <div className="glass-panel rounded-2xl p-6 border border-white/[0.08]">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-white/[0.06]">
+                <div className="surface-card rounded-2xl p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-100">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-[#0077b5]/20 border border-[#0077b5]/40 flex items-center justify-center">
-                        <LinkedInIcon className="w-5 h-5 text-[#00a0dc]" />
+                      <div className="w-10 h-10 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-center">
+                        <LinkedInIcon className="w-5 h-5 text-[#0077b5]" />
                       </div>
                       <div>
-                        <h2 className="text-base font-bold text-white flex items-center gap-2">
+                        <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
                           LinkedIn Connection Authority
                           {credentialStatus?.linkedin?.connected ? (
-                            <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                            <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                               Connected
                             </span>
                           ) : (
-                            <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                            <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
                               Cookie Mode
                             </span>
                           )}
                         </h2>
-                        <p className="text-xs text-slate-400">Manage OAuth authentication or fallback session cookie token</p>
+                        <p className="text-xs text-slate-500">Manage OAuth authentication or fallback session cookie token</p>
                       </div>
                     </div>
 
@@ -742,7 +740,7 @@ export default function Home() {
                               showToast('error', e.message);
                             }
                           }}
-                          className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-500/10 text-rose-300 border border-rose-500/20 hover:bg-rose-500/20 transition"
+                          className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 transition"
                         >
                           Disconnect
                         </button>
@@ -756,7 +754,7 @@ export default function Home() {
                           }, 3000);
                           setTimeout(() => clearInterval(poll), 90000);
                         }}
-                        className="glow-btn-primary px-4 py-2 text-xs rounded-lg flex items-center gap-1.5"
+                        className="btn-primary px-4 py-2 text-xs rounded-lg flex items-center gap-1.5"
                       >
                         <LinkedInIcon className="w-3.5 h-3.5" />
                         <span>{credentialStatus?.linkedin?.connected ? 'Re-Authenticate' : 'Connect LinkedIn'}</span>
@@ -766,38 +764,38 @@ export default function Home() {
 
                   {credentialStatus?.linkedin?.connected ? (
                     <div className="pt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-                      <div className="bg-slate-900/60 p-3 rounded-xl border border-white/[0.04]">
-                        <span className="text-slate-400 block mb-1">Active User</span>
-                        <span className="font-semibold text-white">{credentialStatus.linkedin.profile_name}</span>
+                      <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <span className="text-slate-500 block mb-1">Active User</span>
+                        <span className="font-semibold text-slate-900">{credentialStatus.linkedin.profile_name}</span>
                       </div>
-                      <div className="bg-slate-900/60 p-3 rounded-xl border border-white/[0.04]">
-                        <span className="text-slate-400 block mb-1">Email Account</span>
-                        <span className="font-semibold text-slate-300">
+                      <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <span className="text-slate-500 block mb-1">Email Account</span>
+                        <span className="font-semibold text-slate-700">
                           {credentialStatus.linkedin.profile_email || 'Linked to account'}
                         </span>
                       </div>
-                      <div className="bg-slate-900/60 p-3 rounded-xl border border-white/[0.04]">
-                        <span className="text-slate-400 block mb-1">Token Lifetime</span>
-                        <span className="font-semibold text-cyan-400">
+                      <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <span className="text-slate-500 block mb-1">Token Lifetime</span>
+                        <span className="font-semibold text-indigo-600">
                           {credentialStatus.linkedin.expires_in_days || 60} days remaining
                         </span>
                       </div>
                     </div>
                   ) : (
-                    <div className="pt-4 flex items-center justify-between text-xs text-slate-400">
+                    <div className="pt-4 flex items-center justify-between text-xs text-slate-500">
                       <span>Direct OAuth token not linked. Falling back to session cookie mode.</span>
                     </div>
                   )}
 
                   {/* Cookie Health & Diagnostic Section */}
-                  <div className="mt-5 p-4 rounded-xl bg-slate-900/70 border border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="mt-5 p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center shrink-0 mt-0.5">
-                        <KeyRound className="w-4 h-4 text-cyan-400" />
+                      <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5">
+                        <KeyRound className="w-4 h-4 text-indigo-600" />
                       </div>
                       <div>
-                        <h3 className="text-xs font-semibold text-white">Session Cookie (li_at) Health Validator</h3>
-                        <p className="text-[11px] text-slate-400">
+                        <h3 className="text-xs font-semibold text-slate-900">Session Cookie (li_at) Health Validator</h3>
+                        <p className="text-[11px] text-slate-500">
                           Ensures background recruiter searches and invitations don't get throttled
                         </p>
                       </div>
@@ -807,7 +805,7 @@ export default function Home() {
                       <button
                         onClick={validateLinkedInCookie}
                         disabled={cookieChecking}
-                        className="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30 transition flex items-center gap-1.5"
+                        className="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition flex items-center gap-1.5"
                       >
                         <RefreshCw className={`w-3.5 h-3.5 ${cookieChecking ? 'animate-spin' : ''}`} />
                         <span>{cookieChecking ? 'Testing...' : 'Test Cookie'}</span>
@@ -815,7 +813,7 @@ export default function Home() {
 
                       <button
                         onClick={() => setShowCookieModal(!showCookieModal)}
-                        className="px-3 py-1.5 text-xs font-medium rounded-lg bg-white/[0.05] text-slate-300 hover:text-white border border-white/[0.08] transition"
+                        className="px-3 py-1.5 text-xs font-medium rounded-lg bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-100 transition"
                       >
                         Refresh Guide
                       </button>
@@ -827,12 +825,12 @@ export default function Home() {
                     <div
                       className={`mt-3 p-3.5 rounded-xl border text-xs leading-relaxed animate-in fade-in ${
                         cookieValidation.valid
-                          ? 'bg-emerald-950/40 border-emerald-500/30 text-emerald-200'
-                          : 'bg-rose-950/40 border-rose-500/30 text-rose-200'
+                          ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                          : 'bg-rose-50 border-rose-200 text-rose-800'
                       }`}
                     >
                       <div className="flex items-center gap-2 font-bold mb-1">
-                        {cookieValidation.valid ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <AlertCircle className="w-4 h-4 text-rose-400" />}
+                        {cookieValidation.valid ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : <AlertCircle className="w-4 h-4 text-rose-500" />}
                         <span>{cookieValidation.valid ? 'Cookie Valid & Active' : 'Cookie Expired or Missing'}</span>
                       </div>
                       <p className="text-[11px] opacity-90">{cookieValidation.message}</p>
@@ -841,9 +839,9 @@ export default function Home() {
 
                   {/* Step-by-step Cookie Helper Accordion */}
                   {showCookieModal && (
-                    <div className="mt-4 p-4 rounded-xl bg-slate-950/90 border border-cyan-500/30 text-xs space-y-3 animate-in slide-in-from-top-2">
+                    <div className="mt-4 p-4 rounded-xl bg-indigo-50/60 border border-indigo-200 text-xs space-y-3 animate-in slide-in-from-top-2">
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-cyan-300 flex items-center gap-1.5">
+                        <span className="font-bold text-indigo-700 flex items-center gap-1.5">
                           <HelpCircle className="w-4 h-4" /> 5-Step Guide to Refresh `li_at` Session Cookie
                         </span>
                         <button
@@ -852,27 +850,27 @@ export default function Home() {
                             setCopiedCookieStep(true);
                             setTimeout(() => setCopiedCookieStep(false), 2000);
                           }}
-                          className="text-[11px] text-slate-400 hover:text-cyan-400 flex items-center gap-1"
+                          className="text-[11px] text-slate-500 hover:text-indigo-600 flex items-center gap-1"
                         >
-                          {copiedCookieStep ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                          {copiedCookieStep ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                           <span>Copy key</span>
                         </button>
                       </div>
-                      <ol className="list-decimal list-inside space-y-1.5 text-slate-300 text-[11px] leading-relaxed">
+                      <ol className="list-decimal list-inside space-y-1.5 text-slate-600 text-[11px] leading-relaxed">
                         <li>
-                          Open <span className="text-cyan-300 font-mono">linkedin.com</span> in Chrome and make sure you are logged in.
+                          Open <span className="text-indigo-700 font-mono">linkedin.com</span> in Chrome and make sure you are logged in.
                         </li>
                         <li>
-                          Press <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-200">F12</kbd> (or right click Inspect) and select the <strong className="text-white">Application</strong> tab.
+                          Press <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-300 text-slate-700 shadow-sm">F12</kbd> (or right click Inspect) and select the <strong className="text-slate-900">Application</strong> tab.
                         </li>
                         <li>
-                          In the left sidebar, expand <strong className="text-white">Cookies</strong> &rarr; click <span className="text-cyan-300">https://www.linkedin.com</span>.
+                          In the left sidebar, expand <strong className="text-slate-900">Cookies</strong> &rarr; click <span className="text-indigo-700">https://www.linkedin.com</span>.
                         </li>
                         <li>
-                          Find the cookie named <strong className="text-white font-mono">li_at</strong> and copy its Value.
+                          Find the cookie named <strong className="text-slate-900 font-mono">li_at</strong> and copy its Value.
                         </li>
                         <li>
-                          Paste it in <strong className="text-white font-mono">backend/.env</strong> as <code className="text-cyan-300">LINKEDIN_SESSION_COOKIE=...</code> and restart backend.
+                          Paste it in <strong className="text-slate-900 font-mono">backend/.env</strong> as <code className="text-indigo-700 bg-indigo-50 px-1 rounded">LINKEDIN_SESSION_COOKIE=...</code> and restart backend.
                         </li>
                       </ol>
                     </div>
@@ -880,48 +878,48 @@ export default function Home() {
                 </div>
 
                 {/* Quick Action Matrix */}
-                <div className="glass-panel rounded-2xl p-6 border border-white/[0.08]">
-                  <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-cyan-400" />
+                <div className="surface-card rounded-2xl p-6">
+                  <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-indigo-600" />
                     Autonomous Agent Quick Dispatches
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <button
                       onClick={handleOptimizeProfile}
                       disabled={loading}
-                      className="p-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800/90 border border-white/[0.06] hover:border-cyan-500/30 text-left transition group"
+                      className="p-3.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 hover:border-indigo-200 hover:shadow-sm text-left transition group"
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <Sparkles className="w-4 h-4 text-purple-400 group-hover:scale-110 transition-transform" />
-                        <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-cyan-400 transition" />
+                        <Sparkles className="w-4 h-4 text-purple-600 group-hover:scale-110 transition-transform" />
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-600 transition" />
                       </div>
-                      <div className="text-xs font-bold text-white">Optimize Profile</div>
-                      <p className="text-[11px] text-slate-400 mt-1">AI suggestions for headline & summary</p>
+                      <div className="text-xs font-bold text-slate-900">Optimize Profile</div>
+                      <p className="text-[11px] text-slate-500 mt-1">AI suggestions for headline & summary</p>
                     </button>
 
                     <button
                       onClick={handleProcessInbox}
                       disabled={loading}
-                      className="p-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800/90 border border-white/[0.06] hover:border-cyan-500/30 text-left transition group"
+                      className="p-3.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 hover:border-indigo-200 hover:shadow-sm text-left transition group"
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <MessageSquare className="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform" />
-                        <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-cyan-400 transition" />
+                        <MessageSquare className="w-4 h-4 text-blue-600 group-hover:scale-110 transition-transform" />
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-600 transition" />
                       </div>
-                      <div className="text-xs font-bold text-white">Process Inbox</div>
-                      <p className="text-[11px] text-slate-400 mt-1">Scan unread DMs & prepare replies</p>
+                      <div className="text-xs font-bold text-slate-900">Process Inbox</div>
+                      <p className="text-[11px] text-slate-500 mt-1">Scan unread DMs & prepare replies</p>
                     </button>
 
                     <button
                       onClick={() => setActiveTab('outreach')}
-                      className="p-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800/90 border border-white/[0.06] hover:border-cyan-500/30 text-left transition group"
+                      className="p-3.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 hover:border-indigo-200 hover:shadow-sm text-left transition group"
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <Users className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
-                        <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-cyan-400 transition" />
+                        <Users className="w-4 h-4 text-emerald-600 group-hover:scale-110 transition-transform" />
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-600 transition" />
                       </div>
-                      <div className="text-xs font-bold text-white">Recruiter Blast</div>
-                      <p className="text-[11px] text-slate-400 mt-1">Launch targeted candidate outreach</p>
+                      <div className="text-xs font-bold text-slate-900">Recruiter Blast</div>
+                      <p className="text-[11px] text-slate-500 mt-1">Launch targeted candidate outreach</p>
                     </button>
                   </div>
                 </div>
@@ -930,70 +928,70 @@ export default function Home() {
               {/* Right Column (1 span): Credentials Status & Agent Capabilities */}
               <div className="space-y-6">
                 {/* Credentials Card */}
-                <div className="glass-panel rounded-2xl p-6 border border-white/[0.08]">
-                  <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                    <KeyRound className="w-4 h-4 text-cyan-400" />
+                <div className="surface-card rounded-2xl p-6">
+                  <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <KeyRound className="w-4 h-4 text-indigo-600" />
                     Service Credentials
                   </h3>
                   <div className="space-y-3 text-xs">
-                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-white/[0.04]">
+                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-100">
                       <div className="flex items-center gap-2.5">
-                        <LinkedInIcon className="w-4 h-4 text-[#00a0dc]" />
-                        <span className="font-medium text-slate-200">LinkedIn Session</span>
+                        <LinkedInIcon className="w-4 h-4 text-[#0077b5]" />
+                        <span className="font-medium text-slate-700">LinkedIn Session</span>
                       </div>
                       <span
                         className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
                           credentialStatus?.linkedin_configured
-                            ? 'bg-emerald-500/20 text-emerald-400'
-                            : 'bg-rose-500/20 text-rose-400'
+                            ? 'bg-emerald-50 text-emerald-700'
+                            : 'bg-rose-50 text-rose-700'
                         }`}
                       >
                         {credentialStatus?.linkedin_configured ? 'Configured' : 'Missing'}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-white/[0.04]">
+                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-100">
                       <div className="flex items-center gap-2.5">
-                        <Cpu className="w-4 h-4 text-purple-400" />
-                        <span className="font-medium text-slate-200">Groq AI Llama 3.3</span>
+                        <Cpu className="w-4 h-4 text-purple-600" />
+                        <span className="font-medium text-slate-700">Groq AI Llama 3.3</span>
                       </div>
                       <span
                         className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
                           credentialStatus?.groq_configured
-                            ? 'bg-emerald-500/20 text-emerald-400'
-                            : 'bg-rose-500/20 text-rose-400'
+                            ? 'bg-emerald-50 text-emerald-700'
+                            : 'bg-rose-50 text-rose-700'
                         }`}
                       >
                         {credentialStatus?.groq_configured ? 'Ready' : 'Missing'}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-white/[0.04]">
+                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-100">
                       <div className="flex items-center gap-2.5">
-                        <Mail className="w-4 h-4 text-amber-400" />
-                        <span className="font-medium text-slate-200">Email SMTP</span>
+                        <Mail className="w-4 h-4 text-amber-600" />
+                        <span className="font-medium text-slate-700">Email SMTP</span>
                       </div>
                       <span
                         className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
                           credentialStatus?.smtp_configured
-                            ? 'bg-emerald-500/20 text-emerald-400'
-                            : 'bg-rose-500/20 text-rose-400'
+                            ? 'bg-emerald-50 text-emerald-700'
+                            : 'bg-rose-50 text-rose-700'
                         }`}
                       >
                         {credentialStatus?.smtp_configured ? 'Ready' : 'Missing'}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-white/[0.04]">
+                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-100">
                       <div className="flex items-center gap-2.5">
-                        <Zap className="w-4 h-4 text-blue-400" />
-                        <span className="font-medium text-slate-200">Zapier MCP Bridge</span>
+                        <Zap className="w-4 h-4 text-blue-600" />
+                        <span className="font-medium text-slate-700">Zapier MCP Bridge</span>
                       </div>
                       <span
                         className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
                           credentialStatus?.zapier_configured
-                            ? 'bg-emerald-500/20 text-emerald-400'
-                            : 'bg-slate-700/50 text-slate-400'
+                            ? 'bg-emerald-50 text-emerald-700'
+                            : 'bg-slate-100 text-slate-500'
                         }`}
                       >
                         {credentialStatus?.zapier_configured ? 'Connected' : 'Optional'}
@@ -1003,9 +1001,9 @@ export default function Home() {
                 </div>
 
                 {/* Agent Feature Set Card */}
-                <div className="glass-panel rounded-2xl p-6 border border-white/[0.08]">
-                  <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                    <Layers className="w-4 h-4 text-cyan-400" />
+                <div className="surface-card rounded-2xl p-6">
+                  <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-indigo-600" />
                     Available Agent Tools
                   </h3>
                   <div className="space-y-2 text-xs">
@@ -1019,8 +1017,8 @@ export default function Home() {
                       'RFC 6202 SSE Stream Server',
                       'SMTP Cold Outreach Email Engine',
                     ].map((tool, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-slate-300">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                      <div key={idx} className="flex items-center gap-2 text-slate-600">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
                         <span className="text-[11px] font-medium">{tool}</span>
                       </div>
                     ))}
@@ -1038,15 +1036,15 @@ export default function Home() {
               {/* Left Column: Post Studio & Viral Topic Generator */}
               <div className="lg:col-span-7 space-y-6">
                 {/* AI Post Studio */}
-                <div className="glass-panel rounded-2xl p-6 border border-white/[0.08]">
+                <div className="surface-card rounded-2xl p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center">
-                        <FileText className="w-4 h-4 text-cyan-400" />
+                      <div className="w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center">
+                        <FileText className="w-4 h-4 text-indigo-600" />
                       </div>
                       <div>
-                        <h2 className="text-base font-bold text-white">Post Studio</h2>
-                        <p className="text-xs text-slate-400">Craft and publish engaging updates directly to LinkedIn</p>
+                        <h2 className="text-base font-bold text-slate-900">Post Studio</h2>
+                        <p className="text-xs text-slate-500">Craft and publish engaging updates directly to LinkedIn</p>
                       </div>
                     </div>
 
@@ -1061,12 +1059,12 @@ export default function Home() {
                       onChange={(e) => setPostContent(e.target.value)}
                       placeholder="What insights or engineering updates would you like to share today?..."
                       rows={5}
-                      className="w-full glass-input p-3.5 rounded-xl text-xs sm:text-sm text-slate-100 placeholder-slate-500 resize-none font-sans leading-relaxed"
+                      className="w-full field-input p-3.5 rounded-xl text-xs sm:text-sm resize-none font-sans leading-relaxed"
                     />
 
                     {/* Image Attachment URL */}
                     <div>
-                      <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5 mb-1.5">
+                      <label className="text-xs font-semibold text-slate-700 flex items-center gap-1.5 mb-1.5">
                         <ImageIcon className="w-3.5 h-3.5 text-slate-400" />
                         Attachment Image URL (Optional)
                       </label>
@@ -1075,22 +1073,22 @@ export default function Home() {
                         value={postImageUrl}
                         onChange={(e) => setPostImageUrl(e.target.value)}
                         placeholder="https://images.unsplash.com/... or local file path"
-                        className="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs text-slate-100 placeholder-slate-500"
+                        className="w-full field-input px-3.5 py-2.5 rounded-xl text-xs"
                       />
                     </div>
 
                     {/* Preview box if image URL is present */}
                     {postImageUrl && (
-                      <div className="p-2 rounded-xl bg-slate-900/60 border border-white/[0.06] flex items-center gap-3">
+                      <div className="p-2 rounded-xl bg-slate-50 border border-slate-200 flex items-center gap-3">
                         <img
                           src={postImageUrl}
                           alt="Attachment preview"
-                          className="w-12 h-12 object-cover rounded-lg bg-slate-800"
+                          className="w-12 h-12 object-cover rounded-lg bg-slate-100"
                           onError={(e) => {
                             (e.target as HTMLElement).style.display = 'none';
                           }}
                         />
-                        <span className="text-xs text-slate-400 truncate">Image attachment ready</span>
+                        <span className="text-xs text-slate-500 truncate">Image attachment ready</span>
                       </div>
                     )}
 
@@ -1101,7 +1099,7 @@ export default function Home() {
                           setPostImageUrl('');
                         }}
                         disabled={loading || (!postContent && !postImageUrl)}
-                        className="px-4 py-2 text-xs font-medium rounded-xl text-slate-400 hover:text-slate-200 transition"
+                        className="px-4 py-2 text-xs font-medium rounded-xl text-slate-500 hover:text-slate-800 transition"
                       >
                         Clear
                       </button>
@@ -1109,7 +1107,7 @@ export default function Home() {
                       <button
                         onClick={handlePostToLinkedIn}
                         disabled={loading || !postContent.trim()}
-                        className="glow-btn-primary px-6 py-2.5 rounded-xl text-xs flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="btn-primary px-6 py-2.5 rounded-xl text-xs flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Send className={`w-3.5 h-3.5 ${loadingAction === 'post' ? 'animate-spin' : ''}`} />
                         <span>{loadingAction === 'post' ? 'Publishing...' : 'Publish to Feed'}</span>
@@ -1119,14 +1117,14 @@ export default function Home() {
                 </div>
 
                 {/* Groq AI Trending Topic Generator */}
-                <div className="glass-panel rounded-2xl p-6 border border-white/[0.08]">
+                <div className="surface-card rounded-2xl p-6">
                   <div className="flex items-center gap-2.5 mb-4">
-                    <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center">
-                      <Flame className="w-4 h-4 text-purple-400" />
+                    <div className="w-9 h-9 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-center">
+                      <Flame className="w-4 h-4 text-purple-600" />
                     </div>
                     <div>
-                      <h2 className="text-base font-bold text-white">AI Viral Topic Generator</h2>
-                      <p className="text-xs text-slate-400">
+                      <h2 className="text-base font-bold text-slate-900">AI Viral Topic Generator</h2>
+                      <p className="text-xs text-slate-500">
                         Let Groq AI compose a high-engagement thought leadership post
                       </p>
                     </div>
@@ -1134,13 +1132,13 @@ export default function Home() {
 
                   <div className="space-y-4">
                     <div>
-                      <label className="text-xs font-semibold text-slate-300 block mb-1.5">Topic or Tech Angle</label>
+                      <label className="text-xs font-semibold text-slate-700 block mb-1.5">Topic or Tech Angle</label>
                       <input
                         type="text"
                         value={trendingTopic}
                         onChange={(e) => setTrendingTopic(e.target.value)}
                         placeholder="e.g. Next.js 15 Server Actions vs REST, LLM Agents in production"
-                        className="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm text-slate-100 placeholder-slate-500"
+                        className="w-full field-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm"
                       />
                     </div>
 
@@ -1156,7 +1154,7 @@ export default function Home() {
                           key={chip}
                           type="button"
                           onClick={() => setTrendingTopic(chip)}
-                          className="px-2.5 py-1 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-white/[0.06] text-[11px] text-slate-300 hover:text-cyan-300 transition"
+                          className="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-[11px] text-slate-600 hover:text-indigo-600 transition"
                         >
                           + {chip}
                         </button>
@@ -1164,7 +1162,7 @@ export default function Home() {
                     </div>
 
                     <div>
-                      <label className="text-xs font-semibold text-slate-300 block mb-1.5">Writing Tone</label>
+                      <label className="text-xs font-semibold text-slate-700 block mb-1.5">Writing Tone</label>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         {[
                           { key: 'thought_leadership', label: 'Thought Leader' },
@@ -1178,8 +1176,8 @@ export default function Home() {
                             onClick={() => setPostTone(item.key as any)}
                             className={`px-3 py-2 rounded-xl text-xs font-medium transition ${
                               postTone === item.key
-                                ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
-                                : 'bg-slate-900/60 text-slate-400 hover:text-slate-200 border border-white/[0.04]'
+                                ? 'bg-indigo-50 text-indigo-700 border border-indigo-300'
+                                : 'bg-slate-50 text-slate-500 hover:text-slate-800 border border-slate-200'
                             }`}
                           >
                             {item.label}
@@ -1191,7 +1189,7 @@ export default function Home() {
                     <button
                       onClick={handleGenerateAiPost}
                       disabled={aiGeneratingPost || !trendingTopic.trim()}
-                      className="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:opacity-95 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-purple-950/40 transition disabled:opacity-50"
+                      className="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-500 hover:opacity-95 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm shadow-indigo-200 transition disabled:opacity-50"
                     >
                       <Sparkles className={`w-4 h-4 ${aiGeneratingPost ? 'animate-spin' : ''}`} />
                       <span>{aiGeneratingPost ? 'Synthesizing with Groq AI...' : 'Generate & Post with AI'}</span>
@@ -1203,31 +1201,31 @@ export default function Home() {
               {/* Right Column: Connection Sender & Direct Messaging */}
               <div className="lg:col-span-5 space-y-6">
                 {/* Direct Connection Inviter */}
-                <div className="glass-panel rounded-2xl p-6 border border-white/[0.08]">
+                <div className="surface-card rounded-2xl p-6">
                   <div className="flex items-center gap-2.5 mb-4">
-                    <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
-                      <UserCheck className="w-4 h-4 text-emerald-400" />
+                    <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center">
+                      <UserCheck className="w-4 h-4 text-emerald-600" />
                     </div>
                     <div>
-                      <h2 className="text-base font-bold text-white">Send Connection</h2>
-                      <p className="text-xs text-slate-400">Target a specific profile with a personalized invite</p>
+                      <h2 className="text-base font-bold text-slate-900">Send Connection</h2>
+                      <p className="text-xs text-slate-500">Target a specific profile with a personalized invite</p>
                     </div>
                   </div>
 
                   <div className="space-y-3.5">
                     <div>
-                      <label className="text-xs font-semibold text-slate-300 block mb-1.5">LinkedIn Profile URL</label>
+                      <label className="text-xs font-semibold text-slate-700 block mb-1.5">LinkedIn Profile URL</label>
                       <input
                         type="text"
                         value={connectUrl}
                         onChange={(e) => setConnectUrl(e.target.value)}
                         placeholder="https://www.linkedin.com/in/username"
-                        className="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs text-slate-100 placeholder-slate-500"
+                        className="w-full field-input px-3.5 py-2.5 rounded-xl text-xs"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-semibold text-slate-300 block mb-1.5">
+                      <label className="text-xs font-semibold text-slate-700 block mb-1.5">
                         Personalized Note (Optional)
                       </label>
                       <textarea
@@ -1235,14 +1233,14 @@ export default function Home() {
                         onChange={(e) => setConnectNote(e.target.value)}
                         placeholder="Hi [Name], would love to connect and follow your engineering work!..."
                         rows={3}
-                        className="w-full glass-input p-3 rounded-xl text-xs text-slate-100 placeholder-slate-500 resize-none"
+                        className="w-full field-input p-3 rounded-xl text-xs resize-none"
                       />
                     </div>
 
                     <button
                       onClick={handleSendConnection}
                       disabled={loading || !connectUrl.trim()}
-                      className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50"
+                      className="w-full btn-primary py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                       <Send className={`w-3.5 h-3.5 ${loadingAction === 'connect' ? 'animate-spin' : ''}`} />
                       <span>{loadingAction === 'connect' ? 'Dispatching...' : 'Send Connection Request'}</span>
@@ -1251,44 +1249,44 @@ export default function Home() {
                 </div>
 
                 {/* Direct Messaging (DM) */}
-                <div className="glass-panel rounded-2xl p-6 border border-white/[0.08]">
+                <div className="surface-card rounded-2xl p-6">
                   <div className="flex items-center gap-2.5 mb-4">
-                    <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center">
-                      <MessageSquare className="w-4 h-4 text-blue-400" />
+                    <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center">
+                      <MessageSquare className="w-4 h-4 text-blue-600" />
                     </div>
                     <div>
-                      <h2 className="text-base font-bold text-white">Direct Message (DM)</h2>
-                      <p className="text-xs text-slate-400">Send direct notes to existing 1st degree connections</p>
+                      <h2 className="text-base font-bold text-slate-900">Direct Message (DM)</h2>
+                      <p className="text-xs text-slate-500">Send direct notes to existing 1st degree connections</p>
                     </div>
                   </div>
 
                   <div className="space-y-3.5">
                     <div>
-                      <label className="text-xs font-semibold text-slate-300 block mb-1.5">Connection Name</label>
+                      <label className="text-xs font-semibold text-slate-700 block mb-1.5">Connection Name</label>
                       <input
                         type="text"
                         value={dmName}
                         onChange={(e) => setDmName(e.target.value)}
                         placeholder="e.g. John Doe"
-                        className="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs text-slate-100 placeholder-slate-500"
+                        className="w-full field-input px-3.5 py-2.5 rounded-xl text-xs"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-semibold text-slate-300 block mb-1.5">Message</label>
+                      <label className="text-xs font-semibold text-slate-700 block mb-1.5">Message</label>
                       <textarea
                         value={dmMessage}
                         onChange={(e) => setDmMessage(e.target.value)}
                         placeholder="Hey John, let's catch up regarding the new project!..."
                         rows={3}
-                        className="w-full glass-input p-3 rounded-xl text-xs text-slate-100 placeholder-slate-500 resize-none"
+                        className="w-full field-input p-3 rounded-xl text-xs resize-none"
                       />
                     </div>
 
                     <button
                       onClick={handleSendDm}
                       disabled={loading || !dmName.trim() || !dmMessage.trim()}
-                      className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50"
+                      className="w-full btn-primary py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                       <Send className={`w-3.5 h-3.5 ${loadingAction === 'dm' ? 'animate-spin' : ''}`} />
                       <span>{loadingAction === 'dm' ? 'Sending Message...' : 'Send Direct Message'}</span>
@@ -1304,16 +1302,16 @@ export default function Home() {
         {activeTab === 'outreach' && (
           <div className="space-y-6 animate-in fade-in duration-300">
             {/* Header Banner */}
-            <div className="glass-panel rounded-2xl p-6 border border-white/[0.08] relative overflow-hidden">
+            <div className="surface-card rounded-2xl p-6 relative overflow-hidden">
               <div className="max-w-3xl">
-                <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-xs font-semibold mb-3">
+                <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 text-xs font-semibold mb-3">
                   <Sparkles className="w-3.5 h-3.5" />
                   AI Candidate-Recruiter Pipeline Engine
                 </div>
-                <h2 className="text-xl font-extrabold text-white tracking-tight sm:text-2xl">
+                <h2 className="text-xl font-extrabold text-slate-900 tracking-tight sm:text-2xl">
                   Automated Recruiter Cold Outreach Campaigns
                 </h2>
-                <p className="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-500 mt-2 leading-relaxed">
                   Aegis AI searches local recruiters and tech talent leads matching your target role and geography,
                   then crafts hyper-personalized notes using Groq AI and dispatches connection invites autonomously.
                 </p>
@@ -1323,21 +1321,21 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               {/* Campaign Setup Form */}
               <div className="lg:col-span-5 space-y-6">
-                <div className="glass-panel rounded-2xl p-6 border border-white/[0.08]">
-                  <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                    <Sliders className="w-4 h-4 text-cyan-400" />
+                <div className="surface-card rounded-2xl p-6">
+                  <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <Sliders className="w-4 h-4 text-indigo-600" />
                     Campaign Parameters
                   </h3>
 
                   <div className="space-y-4">
                     <div>
-                      <label className="text-xs font-semibold text-slate-300 block mb-1.5">Target Job Title / Role</label>
+                      <label className="text-xs font-semibold text-slate-700 block mb-1.5">Target Job Title / Role</label>
                       <input
                         type="text"
                         value={coldJob}
                         onChange={(e) => setColdJob(e.target.value)}
                         placeholder="e.g. Senior Full Stack Engineer"
-                        className="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm text-slate-100 placeholder-slate-500"
+                        className="w-full field-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm"
                       />
                     </div>
 
@@ -1353,7 +1351,7 @@ export default function Home() {
                           key={role}
                           type="button"
                           onClick={() => setColdJob(role)}
-                          className="px-2 py-0.5 rounded-md bg-slate-900/80 hover:bg-slate-800 border border-white/[0.06] text-[10px] text-slate-300 hover:text-cyan-300 transition"
+                          className="px-2 py-0.5 rounded-md bg-slate-50 hover:bg-slate-100 border border-slate-200 text-[10px] text-slate-600 hover:text-indigo-600 transition"
                         >
                           {role}
                         </button>
@@ -1361,13 +1359,13 @@ export default function Home() {
                     </div>
 
                     <div>
-                      <label className="text-xs font-semibold text-slate-300 block mb-1.5">Location / Target Market</label>
+                      <label className="text-xs font-semibold text-slate-700 block mb-1.5">Location / Target Market</label>
                       <input
                         type="text"
                         value={coldArea}
                         onChange={(e) => setColdArea(e.target.value)}
                         placeholder="e.g. San Francisco, CA or Remote"
-                        className="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm text-slate-100 placeholder-slate-500"
+                        className="w-full field-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm"
                       />
                     </div>
 
@@ -1378,7 +1376,7 @@ export default function Home() {
                           key={loc}
                           type="button"
                           onClick={() => setColdArea(loc)}
-                          className="px-2 py-0.5 rounded-md bg-slate-900/80 hover:bg-slate-800 border border-white/[0.06] text-[10px] text-slate-300 hover:text-cyan-300 transition"
+                          className="px-2 py-0.5 rounded-md bg-slate-50 hover:bg-slate-100 border border-slate-200 text-[10px] text-slate-600 hover:text-indigo-600 transition"
                         >
                           {loc}
                         </button>
@@ -1387,8 +1385,8 @@ export default function Home() {
 
                     <div>
                       <div className="flex items-center justify-between mb-1.5">
-                        <label className="text-xs font-semibold text-slate-300">Recruiter Batch Limit</label>
-                        <span className="text-xs font-mono font-bold text-cyan-400">{coldLimit} recruiters</span>
+                        <label className="text-xs font-semibold text-slate-700">Recruiter Batch Limit</label>
+                        <span className="text-xs font-mono font-bold text-indigo-600">{coldLimit} recruiters</span>
                       </div>
                       <input
                         type="range"
@@ -1396,12 +1394,12 @@ export default function Home() {
                         max="10"
                         value={coldLimit}
                         onChange={(e) => setColdLimit(parseInt(e.target.value) || 3)}
-                        className="w-full accent-cyan-400 bg-slate-800 h-2 rounded-lg cursor-pointer"
+                        className="w-full accent-indigo-600 bg-slate-200 h-2 rounded-lg cursor-pointer"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-semibold text-slate-300 block mb-1.5">
+                      <label className="text-xs font-semibold text-slate-700 block mb-1.5">
                         Custom Note Template (Optional)
                       </label>
                       <textarea
@@ -1409,14 +1407,14 @@ export default function Home() {
                         onChange={(e) => setColdCustomMessage(e.target.value)}
                         placeholder="Hi {name}, noticed you recruit for {role} roles in {area}. I'd love to connect! (Leave blank for Groq AI auto-generation)"
                         rows={3}
-                        className="w-full glass-input p-3 rounded-xl text-xs text-slate-100 placeholder-slate-500 resize-none font-mono"
+                        className="w-full field-input p-3 rounded-xl text-xs resize-none font-mono"
                       />
                     </div>
 
                     <button
                       onClick={handleColdOutreach}
                       disabled={loading || !coldJob.trim() || !coldArea.trim()}
-                      className="w-full py-3 rounded-xl glow-btn-primary text-xs font-bold flex items-center justify-center gap-2 transition disabled:opacity-50"
+                      className="w-full py-3 rounded-xl btn-primary text-xs font-bold flex items-center justify-center gap-2 transition disabled:opacity-50"
                     >
                       <Play className={`w-4 h-4 ${loadingAction === 'outreach' ? 'animate-spin' : ''}`} />
                       <span>{loadingAction === 'outreach' ? 'Executing Campaign...' : 'Launch Outreach Campaign'}</span>
@@ -1427,22 +1425,22 @@ export default function Home() {
 
               {/* Campaign Live Stream & Results */}
               <div className="lg:col-span-7 space-y-6">
-                <div className="glass-panel rounded-2xl p-6 border border-white/[0.08] min-h-[400px] flex flex-col">
-                  <div className="flex items-center justify-between pb-4 border-b border-white/[0.06] mb-4">
-                    <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                      <Users className="w-4 h-4 text-cyan-400" />
+                <div className="surface-card rounded-2xl p-6 min-h-[400px] flex flex-col">
+                  <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+                    <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                      <Users className="w-4 h-4 text-indigo-600" />
                       Candidate Pipeline Dispatch Feed
                     </h3>
-                    <span className="text-xs text-slate-400 font-mono">
+                    <span className="text-xs text-slate-500 font-mono">
                       {outreachResults.length} leads in session
                     </span>
                   </div>
 
                   {outreachResults.length === 0 ? (
-                    <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-500">
-                      <Users className="w-12 h-12 stroke-[1.2] text-slate-700 mb-3" />
-                      <p className="text-xs font-semibold text-slate-400">No active campaign results yet</p>
-                      <p className="text-[11px] text-slate-500 max-w-sm mt-1">
+                    <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-400">
+                      <Users className="w-12 h-12 stroke-[1.2] text-slate-300 mb-3" />
+                      <p className="text-xs font-semibold text-slate-500">No active campaign results yet</p>
+                      <p className="text-[11px] text-slate-400 max-w-sm mt-1">
                         Configure your target role and region on the left and click "Launch Outreach Campaign" to watch Aegis AI discover recruiters and dispatch invites.
                       </p>
                     </div>
@@ -1451,23 +1449,23 @@ export default function Home() {
                       {outreachResults.map((lead: any, idx: number) => (
                         <div
                           key={idx}
-                          className="p-4 rounded-xl bg-slate-900/80 border border-white/[0.06] hover:border-cyan-500/30 transition space-y-2"
+                          className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-indigo-200 transition space-y-2"
                         >
                           <div className="flex items-start justify-between">
                             <div>
-                              <span className="text-xs font-bold text-white flex items-center gap-2">
+                              <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
                                 👤 {lead.recruiter_name || lead.name || 'Recruiter Lead'}
-                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold">
+                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-semibold">
                                   {lead.status || 'Success'}
                                 </span>
                               </span>
-                              <span className="text-[11px] text-slate-400">{lead.profile_url || lead.url || 'LinkedIn Profile'}</span>
+                              <span className="text-[11px] text-slate-500">{lead.profile_url || lead.url || 'LinkedIn Profile'}</span>
                             </div>
-                            <span className="text-[10px] text-slate-500 font-mono">{new Date().toLocaleTimeString()}</span>
+                            <span className="text-[10px] text-slate-400 font-mono">{new Date().toLocaleTimeString()}</span>
                           </div>
 
                           {lead.note && (
-                            <div className="p-2.5 rounded-lg bg-slate-950/60 border border-white/[0.04] text-[11px] text-slate-300 font-sans italic">
+                            <div className="p-2.5 rounded-lg bg-white border border-slate-200 text-[11px] text-slate-600 font-sans italic">
                               "{lead.note}"
                             </div>
                           )}
@@ -1484,25 +1482,25 @@ export default function Home() {
         {/* ===================== TAB 4: EMAIL AUTOMATION ===================== */}
         {activeTab === 'email' && (
           <div className="space-y-6 animate-in fade-in duration-300 max-w-4xl mx-auto">
-            <div className="glass-panel rounded-2xl p-6 sm:p-8 border border-white/[0.08]">
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/[0.06]">
+            <div className="surface-card rounded-2xl p-6 sm:p-8">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
-                    <Mail className="w-5 h-5 text-amber-400" />
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center">
+                    <Mail className="w-5 h-5 text-amber-600" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold text-white">SMTP Email Dispatcher</h2>
-                    <p className="text-xs text-slate-400">Send high-converting cold pitches, demos, and follow-ups</p>
+                    <h2 className="text-lg font-bold text-slate-900">SMTP Email Dispatcher</h2>
+                    <p className="text-xs text-slate-500">Send high-converting cold pitches, demos, and follow-ups</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="text-slate-400">SMTP:</span>
+                  <span className="text-slate-500">SMTP:</span>
                   <span
                     className={`px-2 py-0.5 rounded font-semibold text-[10px] ${
                       credentialStatus?.smtp_configured
-                        ? 'bg-emerald-500/20 text-emerald-400'
-                        : 'bg-rose-500/20 text-rose-400'
+                        ? 'bg-emerald-50 text-emerald-700'
+                        : 'bg-rose-50 text-rose-700'
                     }`}
                   >
                     {credentialStatus?.smtp_configured ? 'Ready' : 'Not configured'}
@@ -1512,7 +1510,7 @@ export default function Home() {
 
               {/* Template Switcher */}
               <div className="mb-5">
-                <label className="text-xs font-semibold text-slate-300 block mb-2">Preset Email Templates</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-2">Preset Email Templates</label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {[
                     { key: 'recruiter', label: 'Recruiter Inquiry' },
@@ -1526,8 +1524,8 @@ export default function Home() {
                       onClick={() => applyEmailTemplate(tpl.key)}
                       className={`px-3 py-2 rounded-xl text-xs font-medium transition ${
                         emailTemplate === tpl.key
-                          ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                          : 'bg-slate-900/60 text-slate-400 hover:text-slate-200 border border-white/[0.04]'
+                          ? 'bg-indigo-50 text-indigo-700 border border-indigo-300'
+                          : 'bg-slate-50 text-slate-500 hover:text-slate-800 border border-slate-200'
                       }`}
                     >
                       {tpl.label}
@@ -1538,35 +1536,35 @@ export default function Home() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-1.5">Recipient Email Address</label>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1.5">Recipient Email Address</label>
                   <input
                     type="email"
                     value={emailTo}
                     onChange={(e) => setEmailTo(e.target.value)}
                     placeholder="talent@company.com"
-                    className="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm text-slate-100 placeholder-slate-500"
+                    className="w-full field-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-1.5">Subject Line</label>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1.5">Subject Line</label>
                   <input
                     type="text"
                     value={emailSubject}
                     onChange={(e) => setEmailSubject(e.target.value)}
                     placeholder="Inquiry regarding Engineering Role..."
-                    className="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm text-slate-100 placeholder-slate-500"
+                    className="w-full field-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-1.5">Email Body</label>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1.5">Email Body</label>
                   <textarea
                     value={emailBody}
                     onChange={(e) => setEmailBody(e.target.value)}
                     placeholder="Compose email message here..."
                     rows={8}
-                    className="w-full glass-input p-3.5 rounded-xl text-xs sm:text-sm text-slate-100 placeholder-slate-500 resize-none font-sans leading-relaxed"
+                    className="w-full field-input p-3.5 rounded-xl text-xs sm:text-sm resize-none font-sans leading-relaxed"
                   />
                 </div>
 
@@ -1577,7 +1575,7 @@ export default function Home() {
                       setEmailSubject('');
                       setEmailBody('');
                     }}
-                    className="px-4 py-2 text-xs font-medium rounded-xl text-slate-400 hover:text-slate-200 transition"
+                    className="px-4 py-2 text-xs font-medium rounded-xl text-slate-500 hover:text-slate-800 transition"
                   >
                     Clear
                   </button>
@@ -1585,7 +1583,7 @@ export default function Home() {
                   <button
                     onClick={handleSendEmail}
                     disabled={loading || !emailTo.trim() || !emailSubject.trim() || !emailBody.trim()}
-                    className="glow-btn-primary px-6 py-2.5 rounded-xl text-xs flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="btn-primary px-6 py-2.5 rounded-xl text-xs flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Send className={`w-3.5 h-3.5 ${loadingAction === 'email' ? 'animate-spin' : ''}`} />
                     <span>{loadingAction === 'email' ? 'Dispatching...' : 'Send Email via SMTP'}</span>
@@ -1602,36 +1600,36 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               {/* Left Column: Workflow Configuration */}
               <div className="lg:col-span-5 space-y-6">
-                <div className="glass-panel rounded-2xl p-6 border border-white/[0.08]">
+                <div className="surface-card rounded-2xl p-6">
                   <div className="flex items-center gap-2.5 mb-4">
-                    <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center">
-                      <Zap className="w-4 h-4 text-blue-400" />
+                    <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center">
+                      <Zap className="w-4 h-4 text-blue-600" />
                     </div>
                     <div>
-                      <h2 className="text-base font-bold text-white">Zapier & MCP Workflow Dispatcher</h2>
-                      <p className="text-xs text-slate-400">Stream RFC 6202 events with real-time progress</p>
+                      <h2 className="text-base font-bold text-slate-900">Zapier & MCP Workflow Dispatcher</h2>
+                      <p className="text-xs text-slate-500">Stream RFC 6202 events with real-time progress</p>
                     </div>
                   </div>
 
                   <div className="space-y-4">
                     <div>
-                      <label className="text-xs font-semibold text-slate-300 block mb-1.5">Workflow ID</label>
+                      <label className="text-xs font-semibold text-slate-700 block mb-1.5">Workflow ID</label>
                       <input
                         type="text"
                         value={workflowId}
                         onChange={(e) => setWorkflowId(e.target.value)}
                         placeholder="e.g. agent_sync_pipeline"
-                        className="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm text-slate-100 placeholder-slate-500"
+                        className="w-full field-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-semibold text-slate-300 block mb-1.5">JSON Payload</label>
+                      <label className="text-xs font-semibold text-slate-700 block mb-1.5">JSON Payload</label>
                       <textarea
                         value={workflowData}
                         onChange={(e) => setWorkflowData(e.target.value)}
                         rows={8}
-                        className="w-full glass-input p-3 rounded-xl text-xs font-mono text-cyan-300 placeholder-slate-500 resize-none leading-relaxed"
+                        className="w-full field-input p-3 rounded-xl text-xs font-mono text-indigo-700 bg-slate-50 resize-none leading-relaxed"
                       />
                     </div>
 
@@ -1639,7 +1637,7 @@ export default function Home() {
                       <button
                         onClick={handleStreamZapierSse}
                         disabled={isStreamingMcp || !workflowId.trim()}
-                        className="flex-1 py-2.5 rounded-xl glow-btn-primary text-xs font-bold flex items-center justify-center gap-2 disabled:opacity-50"
+                        className="flex-1 py-2.5 rounded-xl btn-primary text-xs font-bold flex items-center justify-center gap-2 disabled:opacity-50"
                       >
                         <Zap className={`w-3.5 h-3.5 ${isStreamingMcp ? 'animate-spin' : ''}`} />
                         <span>{isStreamingMcp ? 'Streaming SSE...' : 'Launch MCP SSE Stream'}</span>
@@ -1651,25 +1649,25 @@ export default function Home() {
 
               {/* Right Column: Live Event Stream Terminal */}
               <div className="lg:col-span-7 space-y-6">
-                <div className="glass-panel rounded-2xl p-6 border border-white/[0.08] min-h-[420px] flex flex-col">
-                  <div className="flex items-center justify-between pb-4 border-b border-white/[0.06] mb-4">
+                <div className="surface-card rounded-2xl p-6 min-h-[420px] flex flex-col">
+                  <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
                     <div className="flex items-center gap-2">
-                      <Radio className="w-4 h-4 text-cyan-400 animate-pulse" />
-                      <h3 className="text-sm font-bold text-white">Live MCP Event Stream Terminal</h3>
+                      <Radio className="w-4 h-4 text-indigo-600 animate-pulse" />
+                      <h3 className="text-sm font-bold text-slate-900">Live MCP Event Stream Terminal</h3>
                     </div>
-                    <span className="text-xs font-mono text-cyan-400">{mcpStreamProgress}%</span>
+                    <span className="text-xs font-mono text-indigo-600">{mcpStreamProgress}%</span>
                   </div>
 
                   {/* Progress Bar */}
-                  <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden mb-4 border border-white/[0.04]">
+                  <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-4 border border-slate-200">
                     <div
-                      className="h-full bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 transition-all duration-300"
+                      className="h-full bg-gradient-to-r from-indigo-500 via-blue-500 to-violet-500 transition-all duration-300"
                       style={{ width: `${mcpStreamProgress}%` }}
                     />
                   </div>
 
                   {/* Stream logs */}
-                  <div className="flex-1 bg-slate-950/80 rounded-xl p-4 border border-white/[0.04] font-mono text-xs overflow-y-auto max-h-[360px] space-y-2">
+                  <div className="flex-1 bg-slate-900 rounded-xl p-4 border border-slate-800 font-mono text-xs overflow-y-auto max-h-[360px] space-y-2">
                     {mcpStreamLogs.length === 0 ? (
                       <div className="h-full flex items-center justify-center text-slate-500 text-xs">
                         Awaiting MCP SSE Stream trigger...
@@ -1677,7 +1675,7 @@ export default function Home() {
                     ) : (
                       mcpStreamLogs.map((item, idx) => (
                         <div key={idx} className="text-slate-300 leading-relaxed">
-                          <span className="text-cyan-400 font-semibold">[{new Date().toLocaleTimeString()}]</span>{' '}
+                          <span className="text-indigo-400 font-semibold">[{new Date().toLocaleTimeString()}]</span>{' '}
                           <span className="text-amber-300 font-semibold">{item.status || item.event || 'EVENT'}:</span>{' '}
                           <span className="text-slate-200">{JSON.stringify(item)}</span>
                         </div>
@@ -1693,29 +1691,29 @@ export default function Home() {
         {/* ===================== TAB 6: ACTIVITY LOGS & CONSOLE ===================== */}
         {activeTab === 'logs' && (
           <div className="space-y-6 animate-in fade-in duration-300">
-            <div className="glass-panel rounded-2xl p-6 border border-white/[0.08]">
-              <div className="flex items-center justify-between pb-4 border-b border-white/[0.06] mb-4">
+            <div className="surface-card rounded-2xl p-6">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-slate-800 border border-white/[0.08] flex items-center justify-center">
-                    <Terminal className="w-4 h-4 text-cyan-400" />
+                  <div className="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center">
+                    <Terminal className="w-4 h-4 text-indigo-600" />
                   </div>
                   <div>
-                    <h2 className="text-base font-bold text-white">System Runtime Terminal</h2>
-                    <p className="text-xs text-slate-400">Live feed of all agent executions, API handshakes, and tasks</p>
+                    <h2 className="text-base font-bold text-slate-900">System Runtime Terminal</h2>
+                    <p className="text-xs text-slate-500">Live feed of all agent executions, API handshakes, and tasks</p>
                   </div>
                 </div>
 
                 <button
                   onClick={() => setLogs([])}
-                  className="px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-xs font-medium text-slate-300 transition"
+                  className="btn-secondary px-3 py-1.5 rounded-lg text-xs font-medium transition"
                 >
                   Clear Console
                 </button>
               </div>
 
-              <div className="bg-slate-950/90 rounded-xl p-4 border border-white/[0.06] font-mono text-xs overflow-y-auto max-h-[500px] space-y-2">
+              <div className="bg-slate-900 rounded-xl p-4 border border-slate-800 font-mono text-xs overflow-y-auto max-h-[500px] space-y-2">
                 {logs.length === 0 ? (
-                  <div className="py-8 text-center text-slate-600">No logs captured in current session.</div>
+                  <div className="py-8 text-center text-slate-500">No logs captured in current session.</div>
                 ) : (
                   logs.map((log) => (
                     <div key={log.id} className="flex items-start gap-2.5 leading-relaxed">
@@ -1723,12 +1721,12 @@ export default function Home() {
                       <span
                         className={`font-semibold uppercase text-[10px] px-1 rounded ${
                           log.type === 'success'
-                            ? 'bg-emerald-500/20 text-emerald-400'
+                            ? 'bg-emerald-500/20 text-emerald-300'
                             : log.type === 'error'
-                            ? 'bg-rose-500/20 text-rose-400'
+                            ? 'bg-rose-500/20 text-rose-300'
                             : log.type === 'warning'
-                            ? 'bg-amber-500/20 text-amber-400'
-                            : 'bg-cyan-500/20 text-cyan-400'
+                            ? 'bg-amber-500/20 text-amber-300'
+                            : 'bg-indigo-500/20 text-indigo-300'
                         }`}
                       >
                         {log.type}
@@ -1745,13 +1743,13 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-cyan-500/15 bg-[#060b14]/90 py-5 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+      <footer className="border-t border-slate-200 bg-white py-5 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
           <div className="flex items-center gap-2.5">
             <AegisLogo size="xs" variant="emblem" withGlow={false} useImage={true} />
-            <span className="font-bold tracking-wider uppercase text-slate-200">AEGIS AI v2.0</span>
-            <span className="text-slate-500">•</span>
-            <span className="text-slate-400">Autonomous Neural Outreach Platform</span>
+            <span className="font-bold tracking-wider uppercase text-slate-700">AEGIS AI v2.0</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-slate-500">Autonomous Outreach Platform</span>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-slate-500">
@@ -1760,7 +1758,7 @@ export default function Home() {
                 href="https://github.com/vanillafeisty/aegis"
                 target="_blank"
                 rel="noreferrer"
-                className="text-cyan-400 hover:text-cyan-300 hover:underline font-mono"
+                className="text-indigo-600 hover:text-indigo-700 hover:underline font-mono"
               >
                 vanillafeisty/aegis
               </a>
