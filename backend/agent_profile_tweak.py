@@ -28,7 +28,7 @@ async def optimize_profile() -> Dict[str, Any]:
     
     try:
         api_key = os.getenv('GROQ_API_KEY')
-        model = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
+        model = os.getenv('GROQ_MODEL', 'openai/gpt-oss-120b')
         
         if not api_key:
             return {"status": "error", "message": "Groq API key not set"}
@@ -49,10 +49,11 @@ async def optimize_profile() -> Dict[str, Any]:
                 
                 Keep it under 220 characters. Make it catchy and SEO-friendly."""
             }],
-            max_tokens=100,
-            temperature=0.7
+            max_tokens=250,
+            temperature=0.7,
+            reasoning_effort="low"
         )
-        
+
         headline = response_headline.choices[0].message.content
         
         # Generate optimized about section
@@ -67,10 +68,11 @@ async def optimize_profile() -> Dict[str, Any]:
                 
                 Be personal, highlight achievements, and include a call-to-action."""
             }],
-            max_tokens=300,
-            temperature=0.7
+            max_tokens=450,
+            temperature=0.7,
+            reasoning_effort="low"
         )
-        
+
         about = response_about.choices[0].message.content
         
         logger.info("Profile optimization completed")

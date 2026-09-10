@@ -18,7 +18,7 @@ ENV_CONTENT = """LINKEDIN_SESSION_COOKIE=your_linkedin_session_cookie_here
 LINKEDIN_CLIENT_ID=your_linkedin_client_id_here
 GROQ_API_KEY=your_groq_api_key_here
 ZAPIER_MCP_URL=https://mcp.zapier.com/api/v1/connect
-GROQ_MODEL=llama-3.3-70b-versatile
+GROQ_MODEL=openai/gpt-oss-120b
 SMTP_EMAIL=your_email@gmail.com
 SMTP_PASSWORD=your_app_password_here
 CLIENT_SECRET=your_client_secret_here

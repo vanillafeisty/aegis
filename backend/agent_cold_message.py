@@ -38,7 +38,7 @@ async def generate_cold_message(recruiter_name: str, job_description: str, area:
 
     try:
         api_key = os.getenv('GROQ_API_KEY')
-        model = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
+        model = os.getenv('GROQ_MODEL', 'openai/gpt-oss-120b')
         client = Groq(api_key=api_key)
 
         prompt = f"""Write a friendly, highly professional LinkedIn connection request note to a recruiter.
@@ -55,8 +55,9 @@ Constraints:
         response = client.chat.completions.create(
             model=model,
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=100,
-            temperature=0.7
+            max_tokens=250,
+            temperature=0.7,
+            reasoning_effort="low"
         )
 
         note = response.choices[0].message.content.strip()

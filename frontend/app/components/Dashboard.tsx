@@ -35,7 +35,9 @@ import {
   Clock,
   ChevronRight,
   KeyRound,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Wand2,
+  Loader2
 } from 'lucide-react';
 
 function LinkedInIcon({ className = "w-4 h-4" }: { className?: string }) {
@@ -102,6 +104,19 @@ export default function Home() {
   // System Logs State
   const [logs, setLogs] = useState<LogItem[]>([]);
   const logsEndRef = useRef<HTMLDivElement>(null);
+
+  // Command Center State
+  interface CommandFeedItem {
+    id: string;
+    command: string;
+    status: 'success' | 'needs_info' | 'error';
+    intent?: string;
+    message: string;
+    time: string;
+  }
+  const [commandText, setCommandText] = useState('');
+  const [commandRunning, setCommandRunning] = useState(false);
+  const [commandFeed, setCommandFeed] = useState<CommandFeedItem[]>([]);
 
   const addLog = (type: 'info' | 'success' | 'warning' | 'error', message: string) => {
     const newLog: LogItem = {
@@ -451,6 +466,53 @@ export default function Home() {
     }
   };
 
+  const handleRunCommand = async () => {
+    const command = commandText.trim();
+    if (!command) return;
+
+    setCommandRunning(true);
+    addLog('info', `Command: "${command}"`);
+
+    const pushFeed = (status: CommandFeedItem['status'], message: string, intent?: string) => {
+      setCommandFeed((prev) => [
+        { id: Math.random().toString(36).substring(2, 9), command, status, message, intent, time: new Date().toLocaleTimeString() },
+        ...prev,
+      ].slice(0, 20));
+    };
+
+    try {
+      const response = await axios.post(`${API_URL}/agents/command`, { command });
+      const data = response.data;
+
+      if (data.status === 'needs_info') {
+        pushFeed('needs_info', data.message, data.intent);
+        showToast('warning', data.message);
+      } else if (data.status === 'success') {
+        const resultStatus = data.result?.status;
+        if (resultStatus === 'error' || resultStatus === 'cookie_expired') {
+          pushFeed('error', `${data.message} — ${data.result?.message || 'action failed'}`, data.intent);
+          showToast('error', data.result?.message || data.message);
+        } else {
+          pushFeed('success', data.note ? `${data.message} ${data.note}` : data.message, data.intent);
+          showToast('success', data.message);
+          if (data.intent === 'post' || data.intent === 'post_trending') {
+            setPostContent('');
+          }
+        }
+      } else {
+        pushFeed('error', data.message || 'Command failed', data.intent);
+        showToast('error', data.message || 'Command failed');
+      }
+      setCommandText('');
+    } catch (error: any) {
+      const message = error.response?.data?.detail || error.message;
+      pushFeed('error', message);
+      showToast('error', `Command failed: ${message}`);
+    } finally {
+      setCommandRunning(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col selection:bg-indigo-100 selection:text-indigo-900">
       {/* Top Banner & Header */}
@@ -571,6 +633,64 @@ export default function Home() {
 
       {/* Main Workspace Body */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        {/* ===================== COMMAND CENTER (always visible) ===================== */}
+        <div className="relative overflow-hidden rounded-2xl p-5 sm:p-6 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 border border-slate-800 shadow-lg shadow-indigo-950/10">
+          <div className="absolute top-0 right-0 -mt-10 -mr-10 w-72 h-72 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-8 h-8 rounded-lg bg-indigo-500/15 border border-indigo-400/30 flex items-center justify-center">
+                <Wand2 className="w-4 h-4 text-indigo-300" />
+              </div>
+              <div>
+                <h2 className="text-sm font-bold text-white">Command Center</h2>
+                <p className="text-[11px] text-slate-400">Tell Aegis what to do, in plain English — it figures out the rest.</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-2.5">
+              <input
+                type="text"
+                value={commandText}
+                onChange={(e) => setCommandText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !commandRunning) handleRunCommand();
+                }}
+                placeholder='e.g. "post about the latest trending AI tools" or "connect with recruiters hiring backend engineers in Austin"'
+                disabled={commandRunning}
+                className="flex-1 bg-white/[0.06] border border-white/[0.12] focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none transition"
+              />
+              <button
+                onClick={handleRunCommand}
+                disabled={commandRunning || !commandText.trim()}
+                className="btn-primary px-5 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+              >
+                {commandRunning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                <span>{commandRunning ? 'Working...' : 'Run'}</span>
+              </button>
+            </div>
+
+            {commandFeed.length > 0 && (
+              <div className="mt-4 space-y-2 max-h-56 overflow-y-auto pr-1">
+                {commandFeed.map((item) => (
+                  <div key={item.id} className="flex items-start gap-2.5 p-2.5 rounded-lg bg-white/[0.04] border border-white/[0.06] text-xs">
+                    {item.status === 'success' && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />}
+                    {item.status === 'needs_info' && <HelpCircle className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />}
+                    {item.status === 'error' && <AlertCircle className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />}
+                    <div className="min-w-0">
+                      <p className="text-slate-300 truncate">"{item.command}"</p>
+                      <p className={`mt-0.5 leading-relaxed ${
+                        item.status === 'success' ? 'text-emerald-300' : item.status === 'needs_info' ? 'text-amber-300' : 'text-rose-300'
+                      }`}>
+                        {item.message}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* ===================== TAB 1: MISSION CONTROL ===================== */}
         {activeTab === 'dashboard' && (
           <div className="space-y-6 animate-in fade-in duration-300">
