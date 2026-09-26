@@ -7,14 +7,7 @@ const Dashboard = dynamic(() => import('./components/Dashboard'), {
   loading: () => (
     <div className="flex min-h-screen items-center justify-center bg-[#f8fafc] text-slate-600">
       <div className="flex flex-col items-center gap-5">
-        <div className="relative">
-          <div className="absolute inset-0 rounded-full bg-indigo-400/20 blur-xl animate-pulse" />
-          <img
-            src="/aegis-logo.png"
-            alt="AEGIS AI"
-            className="w-16 h-16 object-contain relative z-10 drop-shadow-[0_4px_12px_rgba(79,70,229,0.25)] animate-pulse"
-          />
-        </div>
+        <img src="/logo.svg" alt="Aegis" className="w-16 h-16 animate-pulse" />
         <div className="flex flex-col items-center gap-2">
           <div className="h-1 w-32 bg-indigo-100 rounded-full overflow-hidden">
             <div className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full animate-[pulse_1.5s_ease-in-out_infinite]" />

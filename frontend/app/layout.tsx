@@ -5,9 +5,7 @@ export const metadata: Metadata = {
   title: 'AEGIS AI v2.0 | LinkedIn & Outreach Automation Agent',
   description: 'Autonomous AI-powered LinkedIn outreach, email automation, profile optimization, and RFC 6202 SSE event orchestration.',
   icons: {
-    icon: '/icon.png',
-    shortcut: '/favicon.ico',
-    apple: '/icon.png',
+    icon: '/logo.svg',
   },
 };
 

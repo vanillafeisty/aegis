@@ -457,7 +457,7 @@ export default function Home() {
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-3.5">
-            <AegisLogo size="md" variant="badge" withGlow={true} useImage={true} />
+            <AegisLogo size="md" />
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-slate-900 to-indigo-600 bg-clip-text text-transparent">
@@ -582,7 +582,7 @@ export default function Home() {
 
               <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
-                  <AegisLogo size="lg" variant="badge" withGlow={true} useImage={true} />
+                  <AegisLogo size="lg" />
                   <div className="space-y-2">
                     <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
                       <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center gap-1.5">
@@ -1746,7 +1746,7 @@ export default function Home() {
       <footer className="border-t border-slate-200 bg-white py-5 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
           <div className="flex items-center gap-2.5">
-            <AegisLogo size="xs" variant="emblem" withGlow={false} useImage={true} />
+            <AegisLogo size="xs" />
             <span className="font-bold tracking-wider uppercase text-slate-700">AEGIS AI v2.0</span>
             <span className="text-slate-300">•</span>
             <span className="text-slate-500">Autonomous Outreach Platform</span>
