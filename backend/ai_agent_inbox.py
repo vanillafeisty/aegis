@@ -10,12 +10,7 @@ from typing import Dict, Any
 
 logger = logging.getLogger(__name__)
 
-try:
-    from groq import Groq
-    GROQ_AVAILABLE = True
-except ImportError:
-    GROQ_AVAILABLE = False
-    logging.warning("Groq not available")
+import claude_client
 
 from linkedin_http import (
     get_authenticated_client,
@@ -26,17 +21,15 @@ from linkedin_http import (
 async def process_inbox() -> Dict[str, Any]:
     """
     Check LinkedIn inbox and process recent messages with AI-generated replies.
-    Reads the latest conversations, generates a reply via Groq, and sends it.
+    Reads the latest conversations, generates a reply via Claude, and sends it.
     """
-    groq_key = os.getenv('GROQ_API_KEY')
-    model = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
     session_cookie = os.getenv('LINKEDIN_SESSION_COOKIE')
 
     if not session_cookie:
         return {"status": "error", "message": "LinkedIn session cookie not set"}
 
-    if not GROQ_AVAILABLE or not groq_key:
-        return {"status": "error", "message": "Groq AI not available for auto-replies"}
+    if not claude_client.is_configured():
+        return {"status": "error", "message": "Claude AI not available for auto-replies"}
 
     logger.info("Processing LinkedIn inbox via Voyager API")
     messages_processed = 0
@@ -68,8 +61,6 @@ async def process_inbox() -> Dict[str, Any]:
                     "message": "No conversations found in inbox",
                     "messages_processed": 0,
                 }
-
-            groq_client = Groq(api_key=groq_key)
 
             # Process first 3 conversations
             for conv in conversations[:3]:
@@ -116,24 +107,12 @@ async def process_inbox() -> Dict[str, Any]:
                     if not message_body:
                         continue
 
-                    # 3. Generate a reply with Groq
-                    response = groq_client.chat.completions.create(
-                        model=model,
-                        messages=[{
-                            "role": "user",
-                            "content": f"""Generate a professional, friendly reply to this LinkedIn message:
+                    # 3. Generate a reply with Claude
+                    reply = await claude_client.generate_text(f"""Generate a professional, friendly reply to this LinkedIn message:
 
 "{message_body}"
 
-Keep it under 280 characters. Be helpful and professional."""
-                        }],
-                        max_tokens=100,
-                        temperature=0.7
-                    )
-
-                    reply = response.choices[0].message.content.strip()
-                    if reply.startswith('"') and reply.endswith('"'):
-                        reply = reply[1:-1]
+Keep it under 280 characters. Be helpful and professional. Output ONLY the reply text.""")
 
                     # 4. Send the reply
                     reply_payload = {

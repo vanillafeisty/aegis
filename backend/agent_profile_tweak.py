@@ -1,77 +1,42 @@
 """
-LinkedIn Profile Optimization Agent - Uses Groq LLM to generate better profile content
+LinkedIn Profile Optimization Agent - Uses Claude to generate better profile content
 """
 
-import os
 import logging
 from typing import Dict, Any
 
-try:
-    from groq import Groq
-    GROQ_AVAILABLE = True
-except ImportError:
-    GROQ_AVAILABLE = False
-    logging.warning("Groq not available")
+import claude_client
 
 logger = logging.getLogger(__name__)
 
 async def optimize_profile() -> Dict[str, Any]:
     """Optimize LinkedIn profile using AI"""
     
-    if not GROQ_AVAILABLE:
-        logger.warning("Groq not available, returning mock optimization")
-        return {
-            "status": "error",
-            "message": "Groq LLM not available",
-            "suggestion": "Install groq package"
-        }
+    if not claude_client.is_configured():
+        return {"status": "error", "message": "Claude AI not configured - set ANTHROPIC_API_KEY"}
     
     try:
-        api_key = os.getenv('GROQ_API_KEY')
-        model = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
-        
-        if not api_key:
-            return {"status": "error", "message": "Groq API key not set"}
-        
-        logger.info("Optimizing LinkedIn profile with Groq LLM")
-        
-        client = Groq(api_key=api_key)
+        logger.info("Optimizing LinkedIn profile with Claude")
         
         # Generate optimized headline
-        response_headline = client.chat.completions.create(
-            model=model,
-            messages=[{
-                "role": "user",
-                "content": """Generate a professional LinkedIn headline for an AI/ML engineer focused on:
+        headline = await claude_client.generate_text(
+                """Generate a professional LinkedIn headline for an AI/ML engineer focused on:
                 - Full-stack development
                 - LinkedIn automation
                 - Cloud deployment
                 
-                Keep it under 220 characters. Make it catchy and SEO-friendly."""
-            }],
-            max_tokens=100,
-            temperature=0.7
+                Keep it under 220 characters. Make it catchy and SEO-friendly. Output ONLY the headline."""
         )
         
-        headline = response_headline.choices[0].message.content
-        
         # Generate optimized about section
-        response_about = client.chat.completions.create(
-            model=model,
-            messages=[{
-                "role": "user",
-                "content": """Write a compelling LinkedIn about section (200-300 chars) for someone who:
+        about = await claude_client.generate_text(
+                """Write a compelling LinkedIn about section (200-300 chars) for someone who:
                 - Builds AI agents for automation
                 - Works with LinkedIn, email, and cloud APIs
                 - Focuses on practical implementations
                 
-                Be personal, highlight achievements, and include a call-to-action."""
-            }],
-            max_tokens=300,
-            temperature=0.7
+                Be personal, highlight achievements, and include a call-to-action. Output ONLY the about text."""
         )
-        
-        about = response_about.choices[0].message.content
         
         logger.info("Profile optimization completed")
         
@@ -82,7 +47,7 @@ async def optimize_profile() -> Dict[str, Any]:
                 "headline": headline,
                 "about": about,
                 "recommendations": [
-                    "Add relevant skills: Python, FastAPI, Groq, Playwright",
+                    "Add relevant skills: Python, FastAPI, Claude API",
                     "Include recent projects in experience section",
                     "Add recommendations from colleagues",
                     "Enable profile visibility to recruiter searches"

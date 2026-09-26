@@ -16,9 +16,9 @@ ENV_FILE = BACKEND_DIR / ".env"
 # Template credentials (paste your credentials here or use .env)
 ENV_CONTENT = """LINKEDIN_SESSION_COOKIE=your_linkedin_session_cookie_here
 LINKEDIN_CLIENT_ID=your_linkedin_client_id_here
-GROQ_API_KEY=your_groq_api_key_here
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
 ZAPIER_MCP_URL=https://mcp.zapier.com/api/v1/connect
-GROQ_MODEL=llama-3.3-70b-versatile
+CLAUDE_MODEL=claude-opus-5
 SMTP_EMAIL=your_email@gmail.com
 SMTP_PASSWORD=your_app_password_here
 CLIENT_SECRET=your_client_secret_here
@@ -93,7 +93,7 @@ def setup_env():
         
         # Clear any existing values
         for key in list(os.environ.keys()):
-            if key.startswith(('LINKEDIN', 'GROQ', 'SMTP', 'ZAPIER', 'CLIENT', 'REDIRECT', 'ENVIRONMENT', 'DEBUG', 'LOG')):
+            if key.startswith(('LINKEDIN', 'ANTHROPIC', 'CLAUDE', 'SMTP', 'ZAPIER', 'CLIENT', 'REDIRECT', 'ENVIRONMENT', 'DEBUG', 'LOG')):
                 del os.environ[key]
         
         # Load the .env file
@@ -106,8 +106,8 @@ def setup_env():
             'LINKEDIN_SESSION_COOKIE',
             'LINKEDIN_CLIENT_ID',
             'LINKEDIN_ACCESS_TOKEN',
-            'GROQ_API_KEY',
-            'GROQ_MODEL',
+            'ANTHROPIC_API_KEY',
+            'CLAUDE_MODEL',
             'SMTP_EMAIL',
             'SMTP_PASSWORD',
             'ZAPIER_MCP_URL'
@@ -163,7 +163,7 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path=str(env_file), override=True)
 
 # Verify credentials loaded
-required_keys = ['GROQ_API_KEY', 'SMTP_EMAIL', 'SMTP_PASSWORD']
+required_keys = ['ANTHROPIC_API_KEY', 'SMTP_EMAIL', 'SMTP_PASSWORD']
 missing = [k for k in required_keys if not os.getenv(k)]
 
 if missing:

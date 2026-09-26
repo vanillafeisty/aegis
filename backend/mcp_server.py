@@ -197,7 +197,7 @@ ZAPIER_TOOLS = [
     },
     {
         "name": "process_inbox",
-        "description": "Read recent LinkedIn messages and auto-reply using Groq AI",
+        "description": "Read recent LinkedIn messages and auto-reply using Claude AI",
         "inputSchema": {
             "type": "object",
             "properties": {}

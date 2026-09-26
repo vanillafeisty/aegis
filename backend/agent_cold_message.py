@@ -1,7 +1,7 @@
 """
 LinkedIn Recruiter Cold Outreach Agent
 Searches for recruiters based on area and job description,
-generates a custom cold message using Groq, and sends a connection request with a note.
+generates a custom cold message using Claude, and sends a connection request with a note.
 Uses the LinkedIn Voyager API with the li_at session cookie.
 No Playwright or browser automation required.
 """
@@ -20,27 +20,17 @@ from linkedin_http import (
     COOKIE_EXPIRED_MESSAGE,
 )
 
-# Groq import with fallback
-try:
-    from groq import Groq
-    GROQ_AVAILABLE = True
-except ImportError:
-    GROQ_AVAILABLE = False
-    logger.warning("Groq not available - mock messages will be used")
+import claude_client
 
 
 async def generate_cold_message(recruiter_name: str, job_description: str, area: str) -> str:
-    """Generate a personalized connection note under 300 characters using Groq."""
-    if not GROQ_AVAILABLE or not os.getenv('GROQ_API_KEY'):
+    """Generate a personalized connection note under 300 characters using Claude."""
+    if not claude_client.is_configured():
         # Fallback template
         note = f"Hi {recruiter_name}, saw you recruit for {job_description} roles in {area}. Would love to connect and chat about potential opportunities. Best!"
         return note[:299]
 
     try:
-        api_key = os.getenv('GROQ_API_KEY')
-        model = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
-        client = Groq(api_key=api_key)
-
         prompt = f"""Write a friendly, highly professional LinkedIn connection request note to a recruiter.
 Recruiter name: {recruiter_name}
 Target role/Job description: {job_description}
@@ -52,17 +42,7 @@ Constraints:
 - Do NOT include placeholders (like [My Name] or [Your Company]). Ends the message with a generic friendly sign-off like 'Best' or 'Regards' without placeholders.
 - Output ONLY the final note message, nothing else."""
 
-        response = client.chat.completions.create(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=100,
-            temperature=0.7
-        )
-
-        note = response.choices[0].message.content.strip()
-        # Clean up any quotes
-        if note.startswith('"') and note.endswith('"'):
-            note = note[1:-1]
+        note = await claude_client.generate_text(prompt)
 
         # Safe truncation fallback
         if len(note) >= 300:
@@ -70,7 +50,7 @@ Constraints:
 
         return note
     except Exception as e:
-        logger.error(f"Error generating cold message via Groq: {e}")
+        logger.error(f"Error generating cold message via Claude: {e}")
         return f"Hi {recruiter_name}, I'm looking for {job_description} roles in {area} and would love to connect. Best!"
 
 

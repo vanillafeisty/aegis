@@ -338,7 +338,7 @@ export default function Home() {
   const handleOptimizeProfile = async () => {
     setLoading(true);
     setLoadingAction('optimize');
-    addLog('info', 'Running Groq AI profile enhancement scan...');
+    addLog('info', 'Running Claude AI profile enhancement scan...');
     try {
       const response = await axios.post(`${API_URL}/agents/profile`);
       showToast('success', 'Profile optimization analysis complete! Check logs for details.');
@@ -590,7 +590,7 @@ export default function Home() {
                         AGENT ACTIVE
                       </span>
                       <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-                        GROQ LLAMA 3.3
+                        CLAUDE OPUS 5
                       </span>
                       <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                         RFC 6202 SSE READY
@@ -636,7 +636,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-lg font-bold text-slate-900">Groq Llama 3.3</span>
+                  <span className="text-lg font-bold text-slate-900">Claude Opus 5</span>
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-semibold">Active</span>
                 </div>
                 <p className="text-xs text-slate-500 mt-1">High-speed cold message & post generation</p>
@@ -953,16 +953,16 @@ export default function Home() {
                     <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-100">
                       <div className="flex items-center gap-2.5">
                         <Cpu className="w-4 h-4 text-purple-600" />
-                        <span className="font-medium text-slate-700">Groq AI Llama 3.3</span>
+                        <span className="font-medium text-slate-700">Claude AI Opus 5</span>
                       </div>
                       <span
                         className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
-                          credentialStatus?.groq_configured
+                          credentialStatus?.claude_configured
                             ? 'bg-emerald-50 text-emerald-700'
                             : 'bg-rose-50 text-rose-700'
                         }`}
                       >
-                        {credentialStatus?.groq_configured ? 'Ready' : 'Missing'}
+                        {credentialStatus?.claude_configured ? 'Ready' : 'Missing'}
                       </span>
                     </div>
 
@@ -1009,7 +1009,7 @@ export default function Home() {
                   <div className="space-y-2 text-xs">
                     {[
                       'LinkedIn Feed Publisher (Text + Media)',
-                      'Groq Viral Thought-Leadership Generator',
+                      'Claude Viral Thought-Leadership Generator',
                       'Recruiter Geo & Title Scanner',
                       'Personalized Invite Note Crafter',
                       'Direct Connection Inviter',
@@ -1116,7 +1116,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Groq AI Trending Topic Generator */}
+                {/* Claude AI Trending Topic Generator */}
                 <div className="surface-card rounded-2xl p-6">
                   <div className="flex items-center gap-2.5 mb-4">
                     <div className="w-9 h-9 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-center">
@@ -1125,7 +1125,7 @@ export default function Home() {
                     <div>
                       <h2 className="text-base font-bold text-slate-900">AI Viral Topic Generator</h2>
                       <p className="text-xs text-slate-500">
-                        Let Groq AI compose a high-engagement thought leadership post
+                        Let Claude compose a high-engagement thought leadership post
                       </p>
                     </div>
                   </div>
@@ -1192,7 +1192,7 @@ export default function Home() {
                       className="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-500 hover:opacity-95 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm shadow-indigo-200 transition disabled:opacity-50"
                     >
                       <Sparkles className={`w-4 h-4 ${aiGeneratingPost ? 'animate-spin' : ''}`} />
-                      <span>{aiGeneratingPost ? 'Synthesizing with Groq AI...' : 'Generate & Post with AI'}</span>
+                      <span>{aiGeneratingPost ? 'Synthesizing with Claude...' : 'Generate & Post with AI'}</span>
                     </button>
                   </div>
                 </div>
@@ -1313,7 +1313,7 @@ export default function Home() {
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-500 mt-2 leading-relaxed">
                   Aegis AI searches local recruiters and tech talent leads matching your target role and geography,
-                  then crafts hyper-personalized notes using Groq AI and dispatches connection invites autonomously.
+                  then crafts hyper-personalized notes using Claude and dispatches connection invites autonomously.
                 </p>
               </div>
             </div>
@@ -1405,7 +1405,7 @@ export default function Home() {
                       <textarea
                         value={coldCustomMessage}
                         onChange={(e) => setColdCustomMessage(e.target.value)}
-                        placeholder="Hi {name}, noticed you recruit for {role} roles in {area}. I'd love to connect! (Leave blank for Groq AI auto-generation)"
+                        placeholder="Hi {name}, noticed you recruit for {role} roles in {area}. I'd love to connect! (Leave blank for Claude auto-generation)"
                         rows={3}
                         className="w-full field-input p-3 rounded-xl text-xs resize-none font-mono"
                       />

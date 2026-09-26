@@ -25,7 +25,7 @@ def run_server():
     # Overwrite environment variables for safe testing
     os = __import__('os')
     os.environ['LINKEDIN_SESSION_COOKIE'] = 'mock_cookie'
-    os.environ['GROQ_API_KEY'] = 'mock_groq_key'
+    os.environ['ANTHROPIC_API_KEY'] = 'mock_anthropic_key'
     os.environ['SMTP_EMAIL'] = 'mock_email@gmail.com'
     os.environ['SMTP_PASSWORD'] = 'mock_password'
     uvicorn.run(app, host="127.0.0.1", port=8081, log_level="warning")

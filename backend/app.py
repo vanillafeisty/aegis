@@ -29,6 +29,8 @@ except ImportError as e:
 # In-memory store for OAuth state parameters (CSRF protection)
 _oauth_states: Dict[str, float] = {}
 
+import claude_client
+
 # Import agents
 try:
     import agent_post
@@ -44,7 +46,7 @@ except ImportError as e:
 # Initialize MCP Server Instance
 try:
     from mcp_server import ZapierMCPServer
-    mcp_server_instance = ZapierMCPServer(api_key=os.getenv('GROQ_API_KEY', 'default_key'))
+    mcp_server_instance = ZapierMCPServer(api_key=os.getenv('ANTHROPIC_API_KEY', 'default_key'))
 except Exception as e:
     logger.warning(f"Failed to initialize MCP Server: {e}")
     mcp_server_instance = None
@@ -125,7 +127,7 @@ def get_credentials_status() -> Dict[str, bool]:
 
     return {
         "linkedin": linkedin_connected,
-        "groq_ai": bool(os.getenv('GROQ_API_KEY')),
+        "claude_ai": claude_client.is_configured(),
         "email_smtp": bool(os.getenv('SMTP_EMAIL')) and bool(os.getenv('SMTP_PASSWORD')),
         "zapier_mcp": bool(os.getenv('ZAPIER_MCP_URL'))
     }
@@ -198,7 +200,7 @@ async def auth_status():
     return {
         "authenticated": all(creds.values()),
         "linkedin_configured": creds["linkedin"],
-        "groq_configured": creds["groq_ai"],
+        "claude_configured": creds["claude_ai"],
         "smtp_configured": creds["email_smtp"],
         "zapier_configured": creds["zapier_mcp"],
         "credentials": creds,
@@ -228,7 +230,7 @@ async def credentials_status():
         "configured": status,
         "summary": {
             "linkedin": linkedin_detail,
-            "groq_ai": "Ready" if status["groq_ai"] else "Missing GROQ_API_KEY",
+            "claude_ai": "Ready" if status["claude_ai"] else "Missing ANTHROPIC_API_KEY",
             "email_smtp": "Ready" if status["email_smtp"] else "Missing SMTP credentials",
             "zapier_mcp": "Ready" if status["zapier_mcp"] else "Optional",
         }
@@ -405,18 +407,14 @@ async def agent_post_content(request: PostRequest):
 
 @app.post("/agents/post-trending")
 async def agent_post_trending(request: TrendingPostRequest):
-    """Generate a post about a trending topic using Groq and post to LinkedIn"""
+    """Generate a post about a trending topic using Claude and post to LinkedIn"""
     try:
-        if not os.getenv('GROQ_API_KEY'):
-            raise HTTPException(status_code=400, detail="Groq AI not configured")
+        if not claude_client.is_configured():
+            raise HTTPException(status_code=400, detail="Claude AI not configured")
         if not os.getenv('LINKEDIN_SESSION_COOKIE'):
             raise HTTPException(status_code=400, detail="LinkedIn not configured")
             
-        # Call Groq to generate post text
-        from groq import Groq
-        client = Groq(api_key=os.getenv('GROQ_API_KEY'))
-        model = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
-        
+        # Call Claude to generate post text
         prompt = f"""Create a highly engaging, professional LinkedIn post about the following trending topic:
 Trending Topic: {request.topic}
 
@@ -430,16 +428,7 @@ Requirements:
 - Output ONLY the final post text, nothing else."""
 
         logger.info(f"Generating trending post for topic: {request.topic}")
-        response = client.chat.completions.create(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=500,
-            temperature=0.7
-        )
-        
-        post_content = response.choices[0].message.content.strip()
-        if post_content.startswith('"') and post_content.endswith('"'):
-            post_content = post_content[1:-1]
+        post_content = await claude_client.generate_text(prompt)
         
         logger.info(f"Generated text: {post_content[:50]}...")
         
@@ -511,8 +500,8 @@ async def handle_cold_message(request: ColdMessageRequest):
 async def agent_optimize_profile():
     """Optimize profile with AI"""
     try:
-        if not os.getenv('GROQ_API_KEY'):
-            raise HTTPException(status_code=400, detail="Groq AI not configured")
+        if not claude_client.is_configured():
+            raise HTTPException(status_code=400, detail="Claude AI not configured")
         
         result = await agent_profile_tweak.optimize_profile()
         return {"status": "success", "result": result}
